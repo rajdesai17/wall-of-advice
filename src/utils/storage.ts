@@ -1,10 +1,11 @@
 import { Message } from '@/types';
 
-export const saveToLocal = (messages: Message[]) => {
+export const saveMessages = (messages: Message[]) => {
   localStorage.setItem('wall-messages', JSON.stringify(messages));
 };
 
-export const loadFromLocal = (): Message[] => {
+export const loadMessages = (): Message[] => {
+  if (typeof window === 'undefined') return [];
   const stored = localStorage.getItem('wall-messages');
   return stored ? JSON.parse(stored) : [];
 }; 

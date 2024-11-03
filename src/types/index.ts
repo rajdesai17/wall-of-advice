@@ -9,4 +9,5 @@ export interface Message {
   };
   color: string;
   messageNumber: number;
+  ownerId: string;
 } 
