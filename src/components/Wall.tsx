@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import type { Message } from '@/types';
+import type { Message as MessageType } from '@/types';
 import Message from './Message';
 import NewMessageButton from './NewMessageButton';
 import MessageModal from './MessageModal';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 
 const Wall = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<MessageType[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [clickPosition, setClickPosition] = useState({ x: 0, y: 0 });
   const [mounted, setMounted] = useState(false);

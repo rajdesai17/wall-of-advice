@@ -58,16 +58,21 @@ export default function Home() {
   const [wallSize, setWallSize] = useState({ width: 10000, height: 10000 });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const wallRef = useRef<HTMLDivElement>(null);
-  const [userId] = useState(() => {
-    // Generate or retrieve user ID
-    const stored = localStorage.getItem('wall-user-id');
-    if (stored) return stored;
-    const newId = Math.random().toString(36).substring(2);
-    localStorage.setItem('wall-user-id', newId);
-    return newId;
-  });
+  const [userId, setUserId] = useState<string>('');
   const [showInfo, setShowInfo] = useState(false);
   const [showHowTo, setShowHowTo] = useState(false);
+
+  // Initialize userId after component mounts
+  useEffect(() => {
+    const stored = localStorage.getItem('wall-user-id');
+    if (stored) {
+      setUserId(stored);
+    } else {
+      const newId = crypto.randomUUID();
+      localStorage.setItem('wall-user-id', newId);
+      setUserId(newId);
+    }
+  }, []);
 
   // Fetch messages on mount
   useEffect(() => {
