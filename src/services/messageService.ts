@@ -1,10 +1,10 @@
-import { kv } from '@vercel/kv';
+import { redis } from '@/lib/redis';
 import type { Message } from '@/types';
 
 // Get all messages
 export const getMessages = async (): Promise<Message[]> => {
   try {
-    return await kv.get('wall-messages') ?? [];
+    return await redis.get('wall-messages') ?? [];
   } catch (error) {
     console.error('Failed to fetch messages:', error);
     return [];
@@ -14,7 +14,7 @@ export const getMessages = async (): Promise<Message[]> => {
 // Add a new message
 export const addMessage = async (message: Omit<Message, 'id' | 'messageNumber'>): Promise<string> => {
   try {
-    const messages: Message[] = await kv.get('wall-messages') ?? [];
+    const messages: Message[] = await redis.get('wall-messages') ?? [];
     const newMessage: Message = {
       ...message,
       id: crypto.randomUUID(),
@@ -22,7 +22,7 @@ export const addMessage = async (message: Omit<Message, 'id' | 'messageNumber'>)
       createdAt: Date.now()
     };
 
-    await kv.set('wall-messages', [...messages, newMessage]);
+    await redis.set('wall-messages', [...messages, newMessage]);
     return newMessage.id;
   } catch (error) {
     console.error('Failed to add message:', error);
@@ -37,7 +37,7 @@ export const updateMessage = async (
   updates: Partial<Message>
 ): Promise<void> => {
   try {
-    const messages: Message[] = await kv.get('wall-messages') ?? [];
+    const messages: Message[] = await redis.get('wall-messages') ?? [];
     const messageIndex = messages.findIndex(m => m.id === messageId);
 
     if (messageIndex === -1) {
@@ -49,7 +49,7 @@ export const updateMessage = async (
     }
 
     messages[messageIndex] = { ...messages[messageIndex], ...updates };
-    await kv.set('wall-messages', messages);
+    await redis.set('wall-messages', messages);
   } catch (error) {
     console.error('Failed to update message:', error);
     throw error;
@@ -59,7 +59,7 @@ export const updateMessage = async (
 // Delete a message
 export const deleteMessage = async (messageId: string, userId: string): Promise<void> => {
   try {
-    const messages: Message[] = await kv.get('wall-messages') ?? [];
+    const messages: Message[] = await redis.get('wall-messages') ?? [];
     const messageIndex = messages.findIndex(m => m.id === messageId);
 
     if (messageIndex === -1) {
@@ -71,7 +71,7 @@ export const deleteMessage = async (messageId: string, userId: string): Promise<
     }
 
     messages.splice(messageIndex, 1);
-    await kv.set('wall-messages', messages);
+    await redis.set('wall-messages', messages);
   } catch (error) {
     console.error('Failed to delete message:', error);
     throw error;
