@@ -127,11 +127,11 @@ const Wall = () => {
 
   return (
     <div className="fixed inset-0 overflow-hidden bg-gray-50">
-      {/* Fixed Header with better alignment */}
+      {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <div className="grid grid-cols-3 items-center">
-            <div className="justify-self-start">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="flex space-x-4">
               <button 
                 className="text-sm bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/60 transition-colors"
                 onClick={() => setShowInfo(true)}
@@ -140,16 +140,11 @@ const Wall = () => {
               </button>
             </div>
 
-            <div className="justify-self-center text-center">
-              <h1 className="text-3xl font-semibold text-gray-800">
-                Words of Advice
-              </h1>
-              <div className="text-sm text-gray-600 mt-1">
-                made with ❤️
-              </div>
-            </div>
+            <h1 className="text-3xl font-semibold text-gray-800">
+              Words of Advice
+            </h1>
 
-            <div className="justify-self-end">
+            <div className="flex space-x-4">
               <button 
                 className="text-sm bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/60 transition-colors"
                 onClick={() => setShowHowTo(true)}
@@ -157,19 +152,27 @@ const Wall = () => {
                 How to Use?
               </button>
             </div>
+
+            <div className="text-sm text-gray-600">
+              made with ❤️
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Main Content with better wall positioning */}
-      <main className="pt-24 h-full">
+      {/* Main Content */}
+      <main className="pt-32 h-full">
         <TransformWrapper
           limitToBounds={false}
-          minScale={0.1}
+          minScale={0.5}
           maxScale={2}
           initialScale={1}
           centerOnInit={true}
           wheel={{ step: 0.1 }}
+          panning={{ disabled: false }}
+          doubleClick={{ disabled: true }}
+          initialPositionX={0}
+          initialPositionY={0}
         >
           {({ zoomIn, zoomOut, resetTransform }) => (
             <>
@@ -177,19 +180,22 @@ const Wall = () => {
               <div className="fixed bottom-6 left-6 z-50 flex gap-2">
                 <button
                   onClick={() => zoomIn()}
-                  className="p-2 bg-white rounded-full shadow-lg hover:bg-gray-50"
+                  className="w-10 h-10 bg-white rounded-full shadow-lg hover:bg-gray-50 flex items-center justify-center text-xl"
+                  aria-label="Zoom in"
                 >
                   +
                 </button>
                 <button
                   onClick={() => zoomOut()}
-                  className="p-2 bg-white rounded-full shadow-lg hover:bg-gray-50"
+                  className="w-10 h-10 bg-white rounded-full shadow-lg hover:bg-gray-50 flex items-center justify-center text-xl"
+                  aria-label="Zoom out"
                 >
                   -
                 </button>
                 <button
                   onClick={() => resetTransform()}
-                  className="p-2 bg-white rounded-full shadow-lg hover:bg-gray-50"
+                  className="w-10 h-10 bg-white rounded-full shadow-lg hover:bg-gray-50 flex items-center justify-center text-xl"
+                  aria-label="Reset view"
                 >
                   ↺
                 </button>
@@ -198,13 +204,14 @@ const Wall = () => {
               <TransformComponent
                 wrapperStyle={{
                   width: "100%",
-                  height: "calc(100vh - 6rem)"
+                  height: "calc(100vh - 8rem)"
                 }}
               >
                 <div
-                  className="w-[10000px] h-[10000px] bg-gray-50 relative"
-                  onClick={handleWallClick}
+                  className="relative bg-gray-50"
                   style={{
+                    width: '3000px',
+                    height: '3000px',
                     backgroundImage: `
                       linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
                       linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px)
@@ -212,6 +219,7 @@ const Wall = () => {
                     backgroundSize: '50px 50px',
                     transformOrigin: 'center center'
                   }}
+                  onClick={handleWallClick}
                 >
                   {messages.map((message) => (
                     <Message 
