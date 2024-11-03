@@ -171,7 +171,7 @@ const Wall = () => {
           panning={{ disabled: false }}
           doubleClick={{ disabled: true }}
         >
-          {({ zoomIn, zoomOut, resetTransform, state }) => (
+          {({ zoomIn, zoomOut, resetTransform }) => (
             <>
               {/* Zoom Controls */}
               <div className="fixed bottom-6 left-6 z-50 flex gap-2">

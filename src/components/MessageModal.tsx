@@ -7,9 +7,10 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (content: string, author?: string) => void;
+  position: { x: number; y: number };
 }
 
-export default function MessageModal({ isOpen, onClose, onSubmit }: Props) {
+export default function MessageModal({ isOpen, onClose, onSubmit, position }: Props) {
   const [content, setContent] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -33,7 +34,13 @@ export default function MessageModal({ isOpen, onClose, onSubmit }: Props) {
     >
       <div className="min-h-screen px-4 text-center flex items-center justify-center">
         <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
-        <div className="inline-block w-full max-w-md p-6 my-8 text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+        <div 
+          className="inline-block w-full max-w-md p-6 my-8 text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl"
+          style={{
+            position: 'relative',
+            top: position.y > window.innerHeight / 2 ? '-100px' : '100px'
+          }}
+        >
           <Dialog.Title className="text-lg font-medium text-gray-900">
             Add your message
           </Dialog.Title>
