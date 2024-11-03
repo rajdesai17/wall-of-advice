@@ -55,19 +55,22 @@ const Wall = () => {
 
   const handleWallClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const scale = rect.width / e.currentTarget.offsetWidth;
+    const x = (e.clientX - rect.left) / scale;
+    const y = (e.clientY - rect.top) / scale;
     setClickPosition({ x, y });
     setIsModalOpen(true);
   };
 
   const handleAddMessage = async (content: string, position: { x: number; y: number }, author?: string) => {
-    // Define newMessage outside try block so it's accessible in catch block
     const newMessage = {
       id: crypto.randomUUID(),
       content,
       author,
-      position,
+      position: {
+        x: position.x,
+        y: position.y
+      },
       ownerId: userId,
       color: `hsl(${Math.random() * 360}, 70%, 80%)`,
       createdAt: Date.now(),
@@ -75,11 +78,9 @@ const Wall = () => {
     };
 
     try {
-      // Optimistically update UI
       setMessages(prev => [...prev, newMessage]);
       setIsModalOpen(false);
 
-      // Send to server
       const response = await fetch('/api/messages', {
         method: 'POST',
         headers: {
@@ -91,12 +92,9 @@ const Wall = () => {
       if (!response.ok) {
         throw new Error('Failed to add message');
       }
-
-      // No need to fetchMessages() here as we've already updated the UI
     } catch (error) {
       console.error('Error adding message:', error);
       setError('Failed to add message. Please try again.');
-      // Rollback optimistic update if needed
       setMessages(prev => prev.filter(msg => msg.id !== newMessage.id));
     }
   };
@@ -130,11 +128,11 @@ const Wall = () => {
   return (
     <div className="fixed inset-0 overflow-hidden bg-gray-50">
       {/* Fixed Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm shadow-sm">
+      <header className="fixed top-0 left-0 right-0 z-[9999] pointer-events-none">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between max-w-4xl mx-auto">
+          <div className="flex items-center justify-center gap-8 max-w-4xl mx-auto">
             <button 
-              className="text-sm bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/60 transition-colors"
+              className="text-sm bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/60 transition-colors pointer-events-auto"
               onClick={() => setShowInfo(true)}
             >
               What is Wall of Advice?
@@ -150,7 +148,7 @@ const Wall = () => {
             </div>
 
             <button 
-              className="text-sm bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/60 transition-colors"
+              className="text-sm bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/60 transition-colors pointer-events-auto"
               onClick={() => setShowHowTo(true)}
             >
               How to Use?
