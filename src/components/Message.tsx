@@ -14,8 +14,8 @@ const Message: React.FC<MessageProps> = ({ message, userId, onPositionUpdate }) 
     <div
       className="absolute p-4 rounded-lg shadow-lg bg-white/90 backdrop-blur-sm"
       style={{
-        left: `${message.position.x}px`,
-        top: `${message.position.y}px`,
+        left: message.position.x,
+        top: message.position.y,
         transform: 'translate(-50%, -50%)',
         maxWidth: '300px',
         minWidth: '200px',

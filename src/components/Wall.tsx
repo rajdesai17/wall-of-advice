@@ -54,36 +54,50 @@ const Wall = () => {
   };
 
   const handleWallClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const x = e.clientX;
-    const y = e.clientY;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
     setClickPosition({ x, y });
     setIsModalOpen(true);
   };
 
   const handleAddMessage = async (content: string, position: { x: number; y: number }, author?: string) => {
+    // Define newMessage outside try block so it's accessible in catch block
+    const newMessage = {
+      id: crypto.randomUUID(),
+      content,
+      author,
+      position,
+      ownerId: userId,
+      color: `hsl(${Math.random() * 360}, 70%, 80%)`,
+      createdAt: Date.now(),
+      messageNumber: messages.length + 1
+    };
+
     try {
+      // Optimistically update UI
+      setMessages(prev => [...prev, newMessage]);
+      setIsModalOpen(false);
+
+      // Send to server
       const response = await fetch('/api/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          content,
-          author,
-          position,
-          ownerId: userId,
-          color: `hsl(${Math.random() * 360}, 70%, 80%)`
-        }),
+        body: JSON.stringify(newMessage),
       });
 
       if (!response.ok) {
         throw new Error('Failed to add message');
       }
 
-      await fetchMessages();
+      // No need to fetchMessages() here as we've already updated the UI
     } catch (error) {
       console.error('Error adding message:', error);
       setError('Failed to add message. Please try again.');
+      // Rollback optimistic update if needed
+      setMessages(prev => prev.filter(msg => msg.id !== newMessage.id));
     }
   };
 
@@ -193,8 +207,10 @@ const Wall = () => {
                 <div
                   className="relative bg-gray-50"
                   style={{
-                    width: '3000px',
-                    height: '3000px',
+                    width: '100%',
+                    height: '100%',
+                    minWidth: '3000px',
+                    minHeight: '3000px',
                     backgroundImage: `
                       linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
                       linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px)
@@ -210,7 +226,13 @@ const Wall = () => {
                       message={message} 
                       userId={userId}
                       onPositionUpdate={(id, pos) => {
-                        console.log('Position updated:', id, pos);
+                        setMessages(prev => 
+                          prev.map(msg => 
+                            msg.id === id 
+                              ? { ...msg, position: pos }
+                              : msg
+                          )
+                        );
                       }}
                     />
                   ))}
