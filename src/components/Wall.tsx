@@ -5,10 +5,21 @@ import type { Message as MessageType } from '@/types';
 import Message from './Message';
 import NewMessageButton from './NewMessageButton';
 import MessageModal from './MessageModal';
-import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
+import { 
+  TransformWrapper, 
+  TransformComponent,
+  ReactZoomPanPinchRef,
+  ReactZoomPanPinchContentRef
+} from 'react-zoom-pan-pinch';
 import { Dialog } from '@headlessui/react';
 import InfoModal from './InfoModal';
 import HowToModal from './HowToModal';
+
+interface TransformWrapperRenderProps {
+  zoomIn: () => void;
+  zoomOut: () => void;
+  resetTransform: () => void;
+}
 
 const Wall = () => {
   const [messages, setMessages] = useState<MessageType[]>([]);
@@ -60,29 +71,40 @@ const Wall = () => {
   };
 
   const handleWallClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    if ((e.target as HTMLElement).closest('.message')) {
+      return;
+    }
+
+    const transformWrapper = e.currentTarget.closest('.react-transform-wrapper') as HTMLElement;
+    const transformComponent = e.currentTarget.closest('.react-transform-component') as HTMLElement;
     
-    const modalPosition = {
-      x: e.clientX,
-      y: e.clientY
-    };
+    if (!transformWrapper || !transformComponent) return;
+
+    const transform = window.getComputedStyle(transformWrapper).transform;
+    const matrix = new DOMMatrix(transform);
+    const scale = matrix.a;
     
-    const messagePosition = {
-      x: x,
-      y: y
-    };
+    const rect = transformComponent.getBoundingClientRect();
     
-    setClickPosition({ 
-      modal: modalPosition,
-      message: messagePosition 
+    const x = (e.clientX - rect.left) / scale;
+    const y = (e.clientY - rect.top) / scale;
+
+    setClickPosition({
+      modal: {
+        x: e.clientX,
+        y: e.clientY
+      },
+      message: {
+        x: x,
+        y: y
+      }
     });
+    
     setIsModalOpen(true);
   };
 
   const handleAddMessage = async (content: string, author?: string) => {
-    const newMessage = {
+    const newMessage: MessageType = {
       id: crypto.randomUUID(),
       content,
       author,
@@ -185,26 +207,26 @@ const Wall = () => {
           panning={{ disabled: false }}
           doubleClick={{ disabled: true }}
         >
-          {({ zoomIn, zoomOut, resetTransform }) => (
+          {(props: ReactZoomPanPinchContentRef) => (
             <>
               {/* Zoom Controls */}
               <div className="fixed bottom-6 left-6 z-50 flex gap-2">
                 <button
-                  onClick={() => zoomIn()}
+                  onClick={() => props.zoomIn()}
                   className="w-10 h-10 bg-white rounded-full shadow-lg hover:bg-gray-50 flex items-center justify-center text-xl"
                   aria-label="Zoom in"
                 >
                   +
                 </button>
                 <button
-                  onClick={() => zoomOut()}
+                  onClick={() => props.zoomOut()}
                   className="w-10 h-10 bg-white rounded-full shadow-lg hover:bg-gray-50 flex items-center justify-center text-xl"
                   aria-label="Zoom out"
                 >
                   -
                 </button>
                 <button
-                  onClick={() => resetTransform()}
+                  onClick={() => props.resetTransform()}
                   className="w-10 h-10 bg-white rounded-full shadow-lg hover:bg-gray-50 flex items-center justify-center text-xl"
                   aria-label="Reset view"
                 >
