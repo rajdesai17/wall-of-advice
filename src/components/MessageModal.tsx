@@ -7,54 +7,56 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (content: string, author?: string) => void;
-  position: { x: number; y: number };
+  position: {
+    modal: { x: number; y: number };
+    message: { x: number; y: number };
+  };
 }
 
 export default function MessageModal({ isOpen, onClose, onSubmit, position }: Props) {
   const [content, setContent] = useState('');
 
-  const getModalPosition = () => {
-    const modalWidth = 400; // Approximate modal width
-    const modalHeight = 300; // Approximate modal height
+  const getModalStyle = () => {
     const padding = 20;
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
+    const modalWidth = 400;
+    const modalHeight = 300;
+    
+    let x = position.modal.x;
+    let y = position.modal.y;
 
-    // Calculate initial position centered on click
-    let x = position.x;
-    let y = position.y;
-
-    // Adjust if modal would go off screen
-    if (x + modalWidth + padding > viewportWidth) {
-      x = viewportWidth - modalWidth - padding;
+    // Ensure modal stays within viewport
+    if (x + modalWidth + padding > window.innerWidth) {
+      x = window.innerWidth - modalWidth - padding;
     }
     if (x < padding) {
       x = padding;
     }
-    if (y + modalHeight + padding > viewportHeight) {
-      y = viewportHeight - modalHeight - padding;
+    if (y + modalHeight + padding > window.innerHeight) {
+      y = window.innerHeight - modalHeight - padding;
     }
     if (y < padding) {
       y = padding;
     }
 
-    return { x, y };
+    return {
+      position: 'fixed' as const,
+      left: `${x}px`,
+      top: `${y}px`,
+      transform: 'translate(-50%, -50%)',
+    };
   };
 
   return (
     <Dialog
       open={isOpen}
       onClose={onClose}
-      className="fixed inset-0 z-50"
+      className="fixed inset-0 z-50 overflow-y-auto"
     >
       <div className="fixed inset-0">
-        <Dialog.Overlay className="fixed inset-0 bg-black/30" />
+        <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
         <div 
-          className="absolute w-full max-w-md transform bg-white rounded-xl shadow-lg"
-          style={{
-            left: `${getModalPosition().x}px`,
-            top: `${getModalPosition().y}px`,
-          }}
+          className="absolute w-full max-w-md bg-white rounded-xl shadow-lg"
+          style={getModalStyle()}
         >
           <div className="p-6">
             <Dialog.Title className="text-lg font-medium text-gray-900 mb-4">

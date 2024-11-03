@@ -13,7 +13,13 @@ import HowToModal from './HowToModal';
 const Wall = () => {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [clickPosition, setClickPosition] = useState({ x: 0, y: 0 });
+  const [clickPosition, setClickPosition] = useState<{
+    modal: { x: number; y: number };
+    message: { x: number; y: number };
+  }>({
+    modal: { x: 0, y: 0 },
+    message: { x: 0, y: 0 }
+  });
   const [mounted, setMounted] = useState(false);
   const [userId] = useState(() => {
     if (typeof window === 'undefined') return '';
@@ -55,22 +61,32 @@ const Wall = () => {
 
   const handleWallClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const scale = rect.width / e.currentTarget.offsetWidth;
-    const x = (e.clientX - rect.left) / scale;
-    const y = (e.clientY - rect.top) / scale;
-    setClickPosition({ x, y });
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const modalPosition = {
+      x: e.clientX,
+      y: e.clientY
+    };
+    
+    const messagePosition = {
+      x: x,
+      y: y
+    };
+    
+    setClickPosition({ 
+      modal: modalPosition,
+      message: messagePosition 
+    });
     setIsModalOpen(true);
   };
 
-  const handleAddMessage = async (content: string, position: { x: number; y: number }, author?: string) => {
+  const handleAddMessage = async (content: string, author?: string) => {
     const newMessage = {
       id: crypto.randomUUID(),
       content,
       author,
-      position: {
-        x: position.x,
-        y: position.y
-      },
+      position: clickPosition.message,
       ownerId: userId,
       color: `hsl(${Math.random() * 360}, 70%, 80%)`,
       createdAt: Date.now(),
@@ -245,7 +261,7 @@ const Wall = () => {
       <MessageModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSubmit={(content, author) => handleAddMessage(content, clickPosition, author)}
+        onSubmit={(content, author) => handleAddMessage(content, author)}
         position={clickPosition}
       />
       <InfoModal
