@@ -75,19 +75,18 @@ const Wall = () => {
       return;
     }
 
-    const transformWrapper = e.currentTarget.closest('.react-transform-wrapper') as HTMLElement;
-    const transformComponent = e.currentTarget.closest('.react-transform-component') as HTMLElement;
+    const wall = e.currentTarget;
+    const wallRect = wall.getBoundingClientRect();
     
-    if (!transformWrapper || !transformComponent) return;
-
+    const transformWrapper = wall.closest('.react-transform-wrapper') as HTMLElement;
+    if (!transformWrapper) return;
+    
     const transform = window.getComputedStyle(transformWrapper).transform;
     const matrix = new DOMMatrix(transform);
     const scale = matrix.a;
-    
-    const rect = transformComponent.getBoundingClientRect();
-    
-    const x = (e.clientX - rect.left) / scale;
-    const y = (e.clientY - rect.top) / scale;
+
+    const x = (e.clientX - wallRect.left + wall.scrollLeft) / scale;
+    const y = (e.clientY - wallRect.top + wall.scrollTop) / scale;
 
     setClickPosition({
       modal: {
@@ -95,8 +94,8 @@ const Wall = () => {
         y: e.clientY
       },
       message: {
-        x: x,
-        y: y
+        x,
+        y
       }
     });
     
@@ -139,8 +138,11 @@ const Wall = () => {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="text-xl text-gray-600">Loading messages...</div>
+      <div className="fixed inset-0 flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent mb-4"></div>
+          <div className="text-xl text-gray-600">Loading messages...</div>
+        </div>
       </div>
     );
   }
@@ -165,18 +167,19 @@ const Wall = () => {
 
   return (
     <div className="fixed inset-0 overflow-hidden bg-gray-50">
-      {/* Fixed Header */}
-      <header className="fixed top-0 left-0 right-0 z-[9999] pointer-events-none">
-        <div className="container mx-auto px-4 py-4">
+      {/* Fixed Header - Updated styles */}
+      <header className="fixed top-0 left-0 w-full z-[9999] pointer-events-none">
+        <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/80 to-transparent" />
+        <div className="relative px-4 py-4">
           <div className="flex items-center justify-center gap-8 max-w-4xl mx-auto">
             <button 
-              className="text-sm bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/60 transition-colors pointer-events-auto"
+              className="text-sm bg-white/80 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/90 transition-colors pointer-events-auto"
               onClick={() => setShowInfo(true)}
             >
               What is Wall of Advice?
             </button>
 
-            <div className="text-center">
+            <div className="text-center bg-white/80 backdrop-blur-sm px-6 py-2 rounded-2xl shadow-md">
               <h1 className="text-3xl font-semibold text-gray-800">
                 Words of Advice
               </h1>
@@ -186,7 +189,7 @@ const Wall = () => {
             </div>
 
             <button 
-              className="text-sm bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/60 transition-colors pointer-events-auto"
+              className="text-sm bg-white/80 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/90 transition-colors pointer-events-auto"
               onClick={() => setShowHowTo(true)}
             >
               How to Use?
@@ -195,8 +198,8 @@ const Wall = () => {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="pt-24 h-full">
+      {/* Main Content - Updated styles */}
+      <main className="h-full">
         <TransformWrapper
           limitToBounds={false}
           minScale={0.5}
@@ -209,8 +212,8 @@ const Wall = () => {
         >
           {(props: ReactZoomPanPinchContentRef) => (
             <>
-              {/* Zoom Controls */}
-              <div className="fixed bottom-6 left-6 z-50 flex gap-2">
+              {/* Zoom Controls - Updated z-index */}
+              <div className="fixed bottom-6 left-6 z-[9998] flex gap-2">
                 <button
                   onClick={() => props.zoomIn()}
                   className="w-10 h-10 bg-white rounded-full shadow-lg hover:bg-gray-50 flex items-center justify-center text-xl"
@@ -237,7 +240,7 @@ const Wall = () => {
               <TransformComponent
                 wrapperStyle={{
                   width: "100%",
-                  height: "calc(100vh - 6rem)"
+                  height: "100vh" // Updated height
                 }}
               >
                 <div
