@@ -26,19 +26,49 @@ export default function MessageModal({ isOpen, onClose, onSubmit, position }: Pr
     }
   };
 
+  // Calculate modal position based on click coordinates
+  const getModalPosition = () => {
+    const modalWidth = 448; // max-w-md = 448px
+    const modalHeight = 300; // approximate height
+    const padding = 20;
+
+    let x = position.x;
+    let y = position.y;
+
+    // Ensure modal stays within viewport bounds
+    if (x + modalWidth + padding > window.innerWidth) {
+      x = window.innerWidth - modalWidth - padding;
+    }
+    if (x < padding) {
+      x = padding;
+    }
+    if (y + modalHeight + padding > window.innerHeight) {
+      y = window.innerHeight - modalHeight - padding;
+    }
+    if (y < padding) {
+      y = padding;
+    }
+
+    return { x, y };
+  };
+
+  const modalPosition = getModalPosition();
+
   return (
     <Dialog
       open={isOpen}
       onClose={onClose}
       className="fixed inset-0 z-50 overflow-y-auto"
     >
-      <div className="min-h-screen px-4 text-center flex items-center justify-center">
+      <div className="fixed inset-0 flex items-center justify-center">
         <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
         <div 
-          className="inline-block w-full max-w-md p-6 my-8 text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl"
+          className="inline-block w-full max-w-md p-6 text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl"
           style={{
-            position: 'relative',
-            top: position.y > window.innerHeight / 2 ? '-100px' : '100px'
+            position: 'absolute',
+            left: `${modalPosition.x}px`,
+            top: `${modalPosition.y}px`,
+            transform: 'translate(-50%, -50%)'
           }}
         >
           <Dialog.Title className="text-lg font-medium text-gray-900">

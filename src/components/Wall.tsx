@@ -53,51 +53,37 @@ const Wall = () => {
     }
   };
 
-  const handleWallClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const scale = (e.currentTarget as any)._reactInternals?.return?.memoizedProps?.scale || 1;
-      
-      const x = (e.clientX - rect.left) / scale;
-      const y = (e.clientY - rect.top) / scale;
-      
-      setClickPosition({ x, y });
-      setIsModalOpen(true);
-    }
+  const handleWallClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const x = e.clientX;
+    const y = e.clientY;
+    setClickPosition({ x, y });
+    setIsModalOpen(true);
   };
 
-  const handleAddMessage = async (content: string, author?: string) => {
+  const handleAddMessage = async (content: string, position: { x: number; y: number }, author?: string) => {
     try {
-      const newMessage = {
-        content,
-        author,
-        position: clickPosition,
-        createdAt: Date.now(),
-        color: `hsl(${Math.random() * 360}, 70%, 80%)`,
-        ownerId: userId
-      };
-
-      console.log('Sending message:', newMessage);
-
       const response = await fetch('/api/messages', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newMessage),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content,
+          author,
+          position,
+          ownerId: userId,
+          color: `hsl(${Math.random() * 360}, 70%, 80%)`
+        }),
       });
 
-      console.log('Response status:', response.status);
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Response data:', data);
-        await fetchMessages();
-        setIsModalOpen(false);
-      } else {
-        const error = await response.json();
-        console.error('Error response:', error);
+      if (!response.ok) {
+        throw new Error('Failed to add message');
       }
+
+      await fetchMessages();
     } catch (error) {
-      console.error('Failed to add message:', error);
+      console.error('Error adding message:', error);
+      setError('Failed to add message. Please try again.');
     }
   };
 
@@ -239,7 +225,7 @@ const Wall = () => {
       <MessageModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSubmit={handleAddMessage}
+        onSubmit={(content, author) => handleAddMessage(content, clickPosition, author)}
         position={clickPosition}
       />
       <InfoModal
