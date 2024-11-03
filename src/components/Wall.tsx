@@ -6,6 +6,7 @@ import Message from './Message';
 import NewMessageButton from './NewMessageButton';
 import MessageModal from './MessageModal';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
+import { Dialog } from '@/components/ui/dialog';
 
 const Wall = () => {
   const [messages, setMessages] = useState<MessageType[]>([]);
@@ -21,6 +22,8 @@ const Wall = () => {
     return newId;
   });
   const [loading, setLoading] = useState(true);
+  const [showInfo, setShowInfo] = useState(false);
+  const [showHowTo, setShowHowTo] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -165,6 +168,69 @@ const Wall = () => {
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleAddMessage}
       />
+
+      {/* Info Modal */}
+      <Dialog 
+        open={showInfo} 
+        onClose={() => setShowInfo(false)}
+        className="fixed inset-0 z-50 overflow-y-auto"
+      >
+        <div className="min-h-screen px-4 text-center">
+          <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
+          <div className="inline-block w-full max-w-md p-6 my-8 text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+            <Dialog.Title className="text-2xl font-medium text-gray-900 mb-4">
+              Welcome to Wall of Advice ✨
+            </Dialog.Title>
+            <div className="mt-2">
+              <p className="text-gray-500">
+                This is your space to share and discover advice, thoughts, and kind words with others.
+              </p>
+            </div>
+            <div className="mt-4">
+              <button
+                type="button"
+                className="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
+                onClick={() => setShowInfo(false)}
+              >
+                Got it!
+              </button>
+            </div>
+          </div>
+        </div>
+      </Dialog>
+
+      {/* How to Use Modal */}
+      <Dialog 
+        open={showHowTo} 
+        onClose={() => setShowHowTo(false)}
+        className="fixed inset-0 z-50 overflow-y-auto"
+      >
+        <div className="min-h-screen px-4 text-center">
+          <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
+          <div className="inline-block w-full max-w-md p-6 my-8 text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+            <Dialog.Title className="text-2xl font-medium text-gray-900 mb-4">
+              How to Use
+            </Dialog.Title>
+            <div className="mt-2">
+              <p className="text-gray-500">
+                1. Click anywhere on the wall to add a message<br/>
+                2. Type your message<br/>
+                3. Add #yourname at the end to sign it (optional)<br/>
+                4. Press Enter to save
+              </p>
+            </div>
+            <div className="mt-4">
+              <button
+                type="button"
+                className="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
+                onClick={() => setShowHowTo(false)}
+              >
+                Got it!
+              </button>
+            </div>
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 };
