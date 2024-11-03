@@ -55,12 +55,15 @@ const Wall = () => {
 
   const handleWallClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      const rect = e.currentTarget.getBoundingClientRect();
-      setClickPosition({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-      });
-      setIsModalOpen(true);
+      const transformComponent = e.currentTarget.parentElement;
+      const rect = transformComponent?.getBoundingClientRect();
+      if (rect) {
+        setClickPosition({
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top,
+        });
+        setIsModalOpen(true);
+      }
     }
   };
 
@@ -127,11 +130,11 @@ const Wall = () => {
 
   return (
     <div className="fixed inset-0 overflow-hidden bg-gray-50">
-      {/* Header */}
+      {/* Fixed Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm shadow-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-col items-center space-y-4">
-            <div className="flex space-x-4">
+        <div className="max-w-4xl mx-auto px-4 py-4">
+          <div className="grid grid-cols-3 items-center">
+            <div className="justify-self-start">
               <button 
                 className="text-sm bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/60 transition-colors"
                 onClick={() => setShowInfo(true)}
@@ -140,11 +143,16 @@ const Wall = () => {
               </button>
             </div>
 
-            <h1 className="text-3xl font-semibold text-gray-800">
-              Words of Advice
-            </h1>
+            <div className="justify-self-center text-center">
+              <h1 className="text-3xl font-semibold text-gray-800">
+                Words of Advice
+              </h1>
+              <div className="text-sm text-gray-600 mt-1">
+                made with ❤️
+              </div>
+            </div>
 
-            <div className="flex space-x-4">
+            <div className="justify-self-end">
               <button 
                 className="text-sm bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/60 transition-colors"
                 onClick={() => setShowHowTo(true)}
@@ -152,16 +160,12 @@ const Wall = () => {
                 How to Use?
               </button>
             </div>
-
-            <div className="text-sm text-gray-600">
-              made with ❤️
-            </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="pt-32 h-full">
+      <main className="pt-24 h-full">
         <TransformWrapper
           limitToBounds={false}
           minScale={0.5}
@@ -171,8 +175,6 @@ const Wall = () => {
           wheel={{ step: 0.1 }}
           panning={{ disabled: false }}
           doubleClick={{ disabled: true }}
-          initialPositionX={0}
-          initialPositionY={0}
         >
           {({ zoomIn, zoomOut, resetTransform }) => (
             <>
@@ -204,7 +206,7 @@ const Wall = () => {
               <TransformComponent
                 wrapperStyle={{
                   width: "100%",
-                  height: "calc(100vh - 8rem)"
+                  height: "calc(100vh - 6rem)"
                 }}
               >
                 <div
@@ -243,6 +245,7 @@ const Wall = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleAddMessage}
+        position={clickPosition}
       />
       <InfoModal
         isOpen={showInfo}
