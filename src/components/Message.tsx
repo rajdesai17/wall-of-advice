@@ -3,34 +3,41 @@
 import React from 'react';
 import type { Message as MessageType } from '@/types';
 
-interface Props {
+interface MessageProps {
   message: MessageType;
   userId: string;
+  onPositionUpdate: (messageId: string, position: { x: number; y: number }) => void;
 }
 
-const Message = ({ message, userId }: Props) => {
+const Message: React.FC<MessageProps> = ({ message, userId, onPositionUpdate }) => {
   return (
     <div
-      className="absolute p-4 rounded-lg shadow-lg bg-white/90 backdrop-blur-sm transition-all duration-200 hover:shadow-xl"
+      className="absolute p-4 rounded-lg shadow-lg bg-white/90 backdrop-blur-sm"
       style={{
         left: `${message.position.x}px`,
         top: `${message.position.y}px`,
         transform: 'translate(-50%, -50%)',
         maxWidth: '300px',
+        minWidth: '200px',
         backgroundColor: message.color,
-        cursor: message.ownerId === userId ? 'move' : 'default',
         zIndex: 10
       }}
     >
       <div className="absolute -top-3 left-4 bg-white/50 px-2 py-0.5 rounded-full text-xs text-gray-600">
         #{message.messageNumber}
       </div>
-      <p className="text-gray-800 whitespace-pre-wrap break-words">{message.content}</p>
-      {message.author && (
-        <p className="mt-2 text-sm text-gray-600 italic">
-          ~ {message.author}
+      
+      <div className="space-y-2">
+        <p className="text-gray-800 whitespace-pre-wrap break-words">
+          {message.content}
         </p>
-      )}
+        
+        {message.author && (
+          <p className="text-sm text-gray-600 italic">
+            ~ {message.author}
+          </p>
+        )}
+      </div>
     </div>
   );
 };
