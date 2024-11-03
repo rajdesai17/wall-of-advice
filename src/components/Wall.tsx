@@ -55,15 +55,14 @@ const Wall = () => {
 
   const handleWallClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      const transformComponent = e.currentTarget.parentElement;
-      const rect = transformComponent?.getBoundingClientRect();
-      if (rect) {
-        setClickPosition({
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top,
-        });
-        setIsModalOpen(true);
-      }
+      const rect = e.currentTarget.getBoundingClientRect();
+      const scale = (e.currentTarget as any)._reactInternals?.return?.memoizedProps?.scale || 1;
+      
+      const x = (e.clientX - rect.left) / scale;
+      const y = (e.clientY - rect.top) / scale;
+      
+      setClickPosition({ x, y });
+      setIsModalOpen(true);
     }
   };
 
@@ -132,18 +131,16 @@ const Wall = () => {
     <div className="fixed inset-0 overflow-hidden bg-gray-50">
       {/* Fixed Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <div className="grid grid-cols-3 items-center">
-            <div className="justify-self-start">
-              <button 
-                className="text-sm bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/60 transition-colors"
-                onClick={() => setShowInfo(true)}
-              >
-                What is Wall of Advice?
-              </button>
-            </div>
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between max-w-4xl mx-auto">
+            <button 
+              className="text-sm bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/60 transition-colors"
+              onClick={() => setShowInfo(true)}
+            >
+              What is Wall of Advice?
+            </button>
 
-            <div className="justify-self-center text-center">
+            <div className="text-center">
               <h1 className="text-3xl font-semibold text-gray-800">
                 Words of Advice
               </h1>
@@ -152,14 +149,12 @@ const Wall = () => {
               </div>
             </div>
 
-            <div className="justify-self-end">
-              <button 
-                className="text-sm bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/60 transition-colors"
-                onClick={() => setShowHowTo(true)}
-              >
-                How to Use?
-              </button>
-            </div>
+            <button 
+              className="text-sm bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/60 transition-colors"
+              onClick={() => setShowHowTo(true)}
+            >
+              How to Use?
+            </button>
           </div>
         </div>
       </header>
@@ -176,7 +171,7 @@ const Wall = () => {
           panning={{ disabled: false }}
           doubleClick={{ disabled: true }}
         >
-          {({ zoomIn, zoomOut, resetTransform }) => (
+          {({ zoomIn, zoomOut, resetTransform, state }) => (
             <>
               {/* Zoom Controls */}
               <div className="fixed bottom-6 left-6 z-50 flex gap-2">
