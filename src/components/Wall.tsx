@@ -103,13 +103,14 @@ const Wall = () => {
 
   return (
     <div className="fixed inset-0 overflow-hidden bg-gray-50">
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm shadow-sm">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+          <nav className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-4">
               <button 
                 className="text-sm bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/60 transition-colors"
                 onClick={() => setShowInfo(true)}
+                aria-label="What is Wall of Advice?"
               >
                 What is Wall of Advice?
               </button>
@@ -123,20 +124,21 @@ const Wall = () => {
               <button 
                 className="text-sm bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/60 transition-colors"
                 onClick={() => setShowHowTo(true)}
+                aria-label="How to use Wall of Advice"
               >
                 How to Use?
               </button>
             </div>
-          </div>
+          </nav>
           <div className="mt-2 text-center">
             <span className="text-sm bg-white/50 backdrop-blur-sm px-4 py-1 rounded-full shadow-md opacity-60">
               made with ❤️
             </span>
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="pt-32 h-full">
+      <main className="pt-32 h-full" role="main">
         <TransformWrapper
           limitToBounds={false}
           minScale={0.1}
@@ -154,6 +156,8 @@ const Wall = () => {
                 `,
                 backgroundSize: '50px 50px'
               }}
+              role="region"
+              aria-label="Message Wall"
             >
               {messages.map((message) => (
                 <Message key={message.id} message={message} userId={userId} />
@@ -161,7 +165,7 @@ const Wall = () => {
             </div>
           </TransformComponent>
         </TransformWrapper>
-      </div>
+      </main>
 
       <MessageModal
         isOpen={isModalOpen}
