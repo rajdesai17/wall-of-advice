@@ -6,7 +6,7 @@ import Message from './Message';
 import NewMessageButton from './NewMessageButton';
 import MessageModal from './MessageModal';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
-import { Dialog } from '@/components/ui/dialog';
+import { Dialog } from '@headlessui/react';
 
 const Wall = () => {
   const [messages, setMessages] = useState<MessageType[]>([]);
