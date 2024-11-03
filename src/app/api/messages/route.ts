@@ -19,22 +19,27 @@ export async function POST(request: Request) {
     console.log('Received message:', body);
 
     const messages: Message[] = await redis.get('wall-messages') ?? [];
-    console.log('Current messages:', messages);
     
     const newMessage: Message = {
       id: uuidv4(),
       content: body.content,
       author: body.author,
-      position: body.position,
+      position: {
+        x: Math.round(body.position.x),
+        y: Math.round(body.position.y)
+      },
       createdAt: Date.now(),
-      color: body.color,
-      messageNumber: messages.length + 1,
+      color: body.color || `hsl(${Math.random() * 360}, 70%, 80%)`,
+      messageNumber: (messages.length + 1),
       ownerId: body.ownerId
     };
 
-    console.log('New message:', newMessage);
-
-    await redis.set('wall-messages', [...messages, newMessage]);
+    console.log('Saving new message:', newMessage);
+    
+    const updatedMessages = [...messages, newMessage];
+    await redis.set('wall-messages', updatedMessages);
+    
+    console.log('Messages saved successfully');
     return NextResponse.json(newMessage);
   } catch (error) {
     console.error('Failed to save message:', error);

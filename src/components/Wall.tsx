@@ -101,43 +101,64 @@ const Wall = () => {
   return (
     <div className="fixed inset-0 overflow-hidden bg-gray-50">
       <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm shadow-sm">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-semibold text-gray-800">Wall of Advice</h1>
-          <div className="flex space-x-4">
-            <button 
-              onClick={() => setIsModalOpen(true)}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-            >
-              Add Message
-            </button>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-4">
+              <button 
+                className="text-sm bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/60 transition-colors"
+                onClick={() => setShowInfo(true)}
+              >
+                What is Wall of Advice?
+              </button>
+            </div>
+
+            <h1 className="text-3xl font-semibold text-gray-800 bg-white/50 backdrop-blur-sm px-6 py-2 rounded-full shadow-lg">
+              Words of Advice
+            </h1>
+
+            <div className="flex items-center gap-4">
+              <button 
+                className="text-sm bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/60 transition-colors"
+                onClick={() => setShowHowTo(true)}
+              >
+                How to Use?
+              </button>
+            </div>
+          </div>
+          <div className="mt-2 text-center">
+            <span className="text-sm bg-white/50 backdrop-blur-sm px-4 py-1 rounded-full shadow-md opacity-60">
+              made with ❤️
+            </span>
           </div>
         </div>
       </div>
 
-      <TransformWrapper
-        limitToBounds={false}
-        minScale={0.1}
-        maxScale={2}
-        initialScale={1}
-      >
-        <TransformComponent>
-          <div
-            className="w-[5000px] h-[5000px] bg-gray-50"
-            onClick={handleWallClick}
-            style={{
-              backgroundImage: `
-                linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px)
-              `,
-              backgroundSize: '50px 50px'
-            }}
-          >
-            {messages.map((message) => (
-              <Message key={message.id} message={message} userId={userId} />
-            ))}
-          </div>
-        </TransformComponent>
-      </TransformWrapper>
+      <div className="pt-32 h-full">
+        <TransformWrapper
+          limitToBounds={false}
+          minScale={0.1}
+          maxScale={2}
+          initialScale={1}
+        >
+          <TransformComponent>
+            <div
+              className="w-[5000px] h-[5000px] bg-gray-50"
+              onClick={handleWallClick}
+              style={{
+                backgroundImage: `
+                  linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px),
+                  linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px)
+                `,
+                backgroundSize: '50px 50px'
+              }}
+            >
+              {messages.map((message) => (
+                <Message key={message.id} message={message} userId={userId} />
+              ))}
+            </div>
+          </TransformComponent>
+        </TransformWrapper>
+      </div>
 
       <MessageModal
         isOpen={isModalOpen}

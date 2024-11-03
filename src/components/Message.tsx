@@ -9,46 +9,26 @@ interface Props {
 }
 
 const Message = ({ message, userId }: Props) => {
-  const handleDragEnd = async (event: any, info: any) => {
-    if (message.ownerId !== userId) return;
-
-    const newPosition = {
-      x: message.position.x + info.offset.x,
-      y: message.position.y + info.offset.y,
-    };
-
-    try {
-      await fetch('/api/messages', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messageId: message.id,
-          userId,
-          updates: { position: newPosition }
-        }),
-      });
-    } catch (error) {
-      console.error('Failed to update message position:', error);
-    }
-  };
-
   return (
     <div
-      className="absolute max-w-[90vw] md:max-w-sm p-4 rounded-lg shadow-lg cursor-move bg-white/90 backdrop-blur-sm transform -translate-x-1/2 -translate-y-1/2 transition-shadow hover:shadow-xl"
+      className="absolute p-4 rounded-lg shadow-lg bg-white/90 backdrop-blur-sm transition-all duration-200 hover:shadow-xl"
       style={{
-        left: message.position.x,
-        top: message.position.y,
+        left: `${message.position.x}px`,
+        top: `${message.position.y}px`,
+        transform: 'translate(-50%, -50%)',
+        maxWidth: '300px',
         backgroundColor: message.color,
-        cursor: message.ownerId === userId ? 'move' : 'default'
+        cursor: message.ownerId === userId ? 'move' : 'default',
+        zIndex: 10
       }}
     >
-      <div className="absolute -top-3 left-4 text-xs text-gray-600 opacity-60">
+      <div className="absolute -top-3 left-4 bg-white/50 px-2 py-0.5 rounded-full text-xs text-gray-600">
         #{message.messageNumber}
       </div>
-      <p className="text-gray-800 break-words">{message.content}</p>
+      <p className="text-gray-800 whitespace-pre-wrap break-words">{message.content}</p>
       {message.author && (
-        <p className="mt-2 text-sm text-gray-500 italic">
-          - {message.author}
+        <p className="mt-2 text-sm text-gray-600 italic">
+          ~ {message.author}
         </p>
       )}
     </div>
