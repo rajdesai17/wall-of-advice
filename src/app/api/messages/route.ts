@@ -28,7 +28,7 @@ export async function POST(request: Request) {
 export async function PATCH(request: Request) {
   try {
     const { messageId, userId, updates } = await request.json();
-    const messages = await kv.get('wall-messages') || [];
+    const messages: Message[] = await kv.get('wall-messages') || [];
     const messageIndex = messages.findIndex(m => m.id === messageId);
 
     if (messageIndex === -1) {
@@ -51,7 +51,7 @@ export async function PATCH(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const { messageId, userId } = await request.json();
-    const messages = await kv.get('wall-messages') || [];
+    const messages: Message[] = await kv.get('wall-messages') || [];
     const messageIndex = messages.findIndex(m => m.id === messageId);
 
     if (messageIndex === -1) {
