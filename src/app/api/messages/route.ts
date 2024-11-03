@@ -1,27 +1,36 @@
 import { kv } from '@vercel/kv';
 import { NextResponse } from 'next/server';
-import { Message } from '@/types';
+import type { Message } from '@/types';
+import { v4 as uuidv4 } from 'uuid';
 
 export async function GET() {
   try {
-    const data = await kv.get<Message[]>('wall-messages');
-    return NextResponse.json(data || []);
+    const messages: Message[] = await kv.get('wall-messages') ?? [];
+    return NextResponse.json(messages);
   } catch (error) {
-    console.error('Failed to fetch messages:', error);
     return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
   }
 }
 
 export async function POST(request: Request) {
   try {
-    const message = await request.json() as Message;
-    const data = await kv.get<Message[]>('wall-messages');
-    const messages = data || [];
-    const updatedMessages = [...messages, message];
-    await kv.set('wall-messages', updatedMessages);
-    return NextResponse.json(message, { status: 201 });
+    const body = await request.json();
+    const messages: Message[] = await kv.get('wall-messages') ?? [];
+    
+    const newMessage: Message = {
+      id: uuidv4(),
+      content: body.content,
+      author: body.author,
+      position: body.position,
+      createdAt: Date.now(),
+      color: body.color,
+      messageNumber: messages.length + 1,
+      ownerId: body.ownerId ?? uuidv4()
+    };
+
+    await kv.set('wall-messages', [...messages, newMessage]);
+    return NextResponse.json(newMessage, { status: 201 });
   } catch (error) {
-    console.error('Failed to save message:', error);
     return NextResponse.json({ error: 'Failed to save message' }, { status: 500 });
   }
 }
