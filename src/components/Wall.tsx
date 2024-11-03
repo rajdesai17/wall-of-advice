@@ -75,18 +75,19 @@ const Wall = () => {
       return;
     }
 
-    const wall = e.currentTarget;
-    const wallRect = wall.getBoundingClientRect();
+    const transformWrapper = e.currentTarget.closest('.react-transform-wrapper') as HTMLElement;
+    const transformComponent = e.currentTarget.closest('.react-transform-component') as HTMLElement;
     
-    const transformWrapper = wall.closest('.react-transform-wrapper') as HTMLElement;
-    if (!transformWrapper) return;
-    
+    if (!transformWrapper || !transformComponent) return;
+
     const transform = window.getComputedStyle(transformWrapper).transform;
     const matrix = new DOMMatrix(transform);
     const scale = matrix.a;
-
-    const x = (e.clientX - wallRect.left + wall.scrollLeft) / scale;
-    const y = (e.clientY - wallRect.top + wall.scrollTop) / scale;
+    
+    const rect = transformComponent.getBoundingClientRect();
+    
+    const x = (e.clientX - rect.left) / scale;
+    const y = (e.clientY - rect.top) / scale;
 
     setClickPosition({
       modal: {
@@ -94,8 +95,8 @@ const Wall = () => {
         y: e.clientY
       },
       message: {
-        x,
-        y
+        x: x,
+        y: y
       }
     });
     
