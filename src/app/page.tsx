@@ -5,7 +5,7 @@ import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { Dialog } from '@headlessui/react';
 
 interface Message {
-  id: number;
+  id: string;
   content: string;
   author?: string;
   createdAt: number;
@@ -141,36 +141,33 @@ export default function Home() {
         const content = matches?.[1]?.trim() || text;
         const author = matches?.[2] || undefined;
 
-        const newMessage: Message = {
-          content,
-          author,
-          id: Date.now(),
-          createdAt: Date.now(),
-          position: currentPosition,
-          color: `hsl(${Math.random() * 360}, 70%, 80%)`,
-          messageNumber: messages.length + 1,
-          ownerId: userId
-        };
-
         try {
           const response = await fetch('/api/messages', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newMessage),
+            body: JSON.stringify({
+              content,
+              author,
+              position: currentPosition,
+              color: `hsl(${Math.random() * 360}, 70%, 80%)`,
+              ownerId: userId
+            }),
           });
 
-          if (response.ok) {
-            setMessages(prev => [...prev, newMessage]);
-            expandWallIfNeeded(currentPosition.x, currentPosition.y);
+          if (!response.ok) {
+            throw new Error('Failed to save message');
           }
+
+          const newMessage = await response.json();
+          setMessages(prev => [...prev, newMessage]);
+          setIsWriting(false);
+          e.currentTarget.value = '';
         } catch (error) {
           console.error('Failed to save message:', error);
         }
-
-        setIsWriting(false);
       }
     }
-  }, [currentPosition, expandWallIfNeeded, messages.length, userId]);
+  }, [currentPosition, userId]);
 
   const handleTransform = useCallback(({ state }: any) => {
     if (!wallRef.current) return;

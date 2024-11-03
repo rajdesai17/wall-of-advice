@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
-    "@vercel/kv": "^1.0.0",
+    "@upstash/redis": "^1.28.3",
     "next": "14.0.0",
     "react": "^18",
     "react-dom": "^18",

@@ -1,13 +1,14 @@
-import { kv } from '@vercel/kv';
+import { redis } from '@/lib/redis';
 import { NextResponse } from 'next/server';
 import type { Message } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function GET() {
   try {
-    const messages: Message[] = await kv.get('wall-messages') ?? [];
+    const messages: Message[] = await redis.get('wall-messages') ?? [];
     return NextResponse.json(messages);
   } catch (error) {
+    console.error('Failed to fetch messages:', error);
     return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
   }
 }
@@ -15,7 +16,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const messages: Message[] = await kv.get('wall-messages') ?? [];
+    const messages: Message[] = await redis.get('wall-messages') ?? [];
     
     const newMessage: Message = {
       id: uuidv4(),
@@ -25,12 +26,13 @@ export async function POST(request: Request) {
       createdAt: Date.now(),
       color: body.color,
       messageNumber: messages.length + 1,
-      ownerId: body.ownerId ?? uuidv4()
+      ownerId: body.ownerId
     };
 
-    await kv.set('wall-messages', [...messages, newMessage]);
-    return NextResponse.json(newMessage, { status: 201 });
+    await redis.set('wall-messages', [...messages, newMessage]);
+    return NextResponse.json(newMessage);
   } catch (error) {
+    console.error('Failed to save message:', error);
     return NextResponse.json({ error: 'Failed to save message' }, { status: 500 });
   }
 }
@@ -38,8 +40,7 @@ export async function POST(request: Request) {
 export async function PATCH(request: Request) {
   try {
     const { messageId, userId, updates } = await request.json();
-    const data = await kv.get<Message[]>('wall-messages');
-    const messages = data || [];
+    const messages: Message[] = await redis.get('wall-messages') ?? [];
     const messageIndex = messages.findIndex(m => m.id === messageId);
 
     if (messageIndex === -1) {
@@ -51,7 +52,7 @@ export async function PATCH(request: Request) {
     }
 
     messages[messageIndex] = { ...messages[messageIndex], ...updates };
-    await kv.set('wall-messages', messages);
+    await redis.set('wall-messages', messages);
     return NextResponse.json(messages[messageIndex]);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update message' }, { status: 500 });
@@ -61,7 +62,7 @@ export async function PATCH(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const { messageId, userId } = await request.json();
-    const data = await kv.get<Message[]>('wall-messages');
+    const data = await redis.get<Message[]>('wall-messages');
     const messages = data || [];
     const messageIndex = messages.findIndex(m => m.id === messageId);
 
@@ -74,7 +75,7 @@ export async function DELETE(request: Request) {
     }
 
     messages.splice(messageIndex, 1);
-    await kv.set('wall-messages', messages);
+    await redis.set('wall-messages', messages);
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to delete message' }, { status: 500 });

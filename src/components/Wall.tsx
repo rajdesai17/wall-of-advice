@@ -60,15 +60,24 @@ const Wall = () => {
         ownerId: userId
       };
 
+      console.log('Sending message:', newMessage);
+
       const response = await fetch('/api/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newMessage),
       });
 
+      console.log('Response status:', response.status);
+
       if (response.ok) {
-        fetchMessages();
+        const data = await response.json();
+        console.log('Response data:', data);
+        await fetchMessages();
         setIsModalOpen(false);
+      } else {
+        const error = await response.json();
+        console.error('Error response:', error);
       }
     } catch (error) {
       console.error('Failed to add message:', error);
