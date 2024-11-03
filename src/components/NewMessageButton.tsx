@@ -1,8 +1,10 @@
 'use client';
 
-import React from 'react';
+interface Props {
+  onClick: () => void;
+}
 
-const NewMessageButton = ({ onClick }: { onClick: () => void }) => {
+const NewMessageButton = ({ onClick }: Props) => {
   return (
     <button
       onClick={onClick}
