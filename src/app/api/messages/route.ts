@@ -1,9 +1,10 @@
 import { kv } from '@vercel/kv';
 import { NextResponse } from 'next/server';
+import { Message } from '@/types';
 
 export async function GET() {
   try {
-    const messages = await kv.get('wall-messages') || [];
+    const messages: Message[] = await kv.get('wall-messages') || [];
     return NextResponse.json(messages);
   } catch (error) {
     console.error('Failed to fetch messages:', error);
@@ -13,8 +14,8 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const message = await request.json();
-    const messages = await kv.get('wall-messages') || [];
+    const message = await request.json() as Message;
+    const messages: Message[] = await kv.get('wall-messages') || [];
     const updatedMessages = [...messages, message];
     await kv.set('wall-messages', updatedMessages);
     return NextResponse.json(message, { status: 201 });

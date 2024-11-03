@@ -8,4 +8,5 @@ export interface Message {
     y: number;
   };
   color: string;
+  messageNumber: number;
 } 
