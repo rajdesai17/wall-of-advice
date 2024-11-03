@@ -24,6 +24,7 @@ const Wall = () => {
   const [loading, setLoading] = useState(true);
   const [showInfo, setShowInfo] = useState(false);
   const [showHowTo, setShowHowTo] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -33,13 +34,18 @@ const Wall = () => {
   const fetchMessages = async () => {
     try {
       setLoading(true);
+      setError(null);
       const response = await fetch('/api/messages');
+      if (!response.ok) {
+        throw new Error('Failed to fetch messages');
+      }
       const data = await response.json();
       if (Array.isArray(data)) {
         setMessages(data);
       }
     } catch (error) {
       console.error('Failed to fetch messages:', error);
+      setError('Failed to load messages. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -95,6 +101,22 @@ const Wall = () => {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
         <div className="text-xl text-gray-600">Loading messages...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center">
+        <div className="text-red-600 text-center">
+          <p className="text-xl mb-4">{error}</p>
+          <button
+            onClick={() => fetchMessages()}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }

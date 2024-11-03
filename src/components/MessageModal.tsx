@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
 import { Dialog } from '@headlessui/react';
+import { useState } from 'react';
 
 interface Props {
   isOpen: boolean;
@@ -11,14 +11,17 @@ interface Props {
 
 export default function MessageModal({ isOpen, onClose, onSubmit }: Props) {
   const [content, setContent] = useState('');
-  const [author, setAuthor] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (content.trim()) {
-      onSubmit(content.trim(), author.trim() || undefined);
+    const matches = content.match(/(.*?)(?:#(\w+))?$/);
+    const messageContent = matches?.[1]?.trim() || content;
+    const author = matches?.[2];
+    
+    if (messageContent.trim()) {
+      onSubmit(messageContent, author);
       setContent('');
-      setAuthor('');
+      onClose();
     }
   };
 
@@ -30,9 +33,8 @@ export default function MessageModal({ isOpen, onClose, onSubmit }: Props) {
     >
       <div className="min-h-screen px-4 text-center">
         <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
-        
-        <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
-          <Dialog.Title className="text-lg font-medium text-gray-900 font-happy-monkey">
+        <div className="inline-block w-full max-w-md p-6 my-8 text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+          <Dialog.Title className="text-lg font-medium text-gray-900">
             Add your message
           </Dialog.Title>
 
@@ -40,31 +42,23 @@ export default function MessageModal({ isOpen, onClose, onSubmit }: Props) {
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="w-full p-2 border rounded-md font-happy-monkey"
-              placeholder="Write your message..."
+              className="w-full p-4 border rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Write your message here... (Add #yourname at the end to sign)"
               rows={4}
               autoFocus
-            />
-            
-            <input
-              type="text"
-              value={author}
-              onChange={(e) => setAuthor(e.target.value)}
-              className="w-full mt-2 p-2 border rounded-md font-happy-monkey"
-              placeholder="Your name (optional)"
             />
 
             <div className="mt-4 flex justify-end gap-2">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 font-happy-monkey"
+                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 text-sm text-white bg-blue-500 rounded-md hover:bg-blue-600 font-happy-monkey"
+                className="px-4 py-2 text-sm text-white bg-blue-500 rounded-md hover:bg-blue-600"
               >
                 Add Message
               </button>

@@ -1,6 +1,7 @@
 import { Happy_Monkey } from 'next/font/google';
 import './globals.css';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { Metadata } from 'next';
 
 const happyMonkey = Happy_Monkey({
   weight: '400',
@@ -8,9 +9,11 @@ const happyMonkey = Happy_Monkey({
   display: 'swap',
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Wall of Advice - Share Your Thoughts',
   description: 'A collaborative wall where people can share advice and thoughts with each other.',
+  viewport: 'width=device-width, initial-scale=1',
+  themeColor: '#ffffff'
 };
 
 export default function RootLayout({
@@ -20,10 +23,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={happyMonkey.className}>
-      <head>
-        <title>{metadata.title}</title>
-        <meta name="description" content={metadata.description} />
-      </head>
       <body>
         <ErrorBoundary>
           {children}
