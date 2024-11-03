@@ -127,11 +127,11 @@ const Wall = () => {
 
   return (
     <div className="fixed inset-0 overflow-hidden bg-gray-50">
-      {/* Fixed Header */}
+      {/* Fixed Header with better alignment */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm shadow-sm">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex flex-col items-center space-y-4">
-            <div className="flex space-x-4">
+        <div className="max-w-4xl mx-auto px-4 py-4">
+          <div className="grid grid-cols-3 items-center">
+            <div className="justify-self-start">
               <button 
                 className="text-sm bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/60 transition-colors"
                 onClick={() => setShowInfo(true)}
@@ -140,11 +140,16 @@ const Wall = () => {
               </button>
             </div>
 
-            <h1 className="text-3xl font-semibold text-gray-800">
-              Words of Advice
-            </h1>
+            <div className="justify-self-center text-center">
+              <h1 className="text-3xl font-semibold text-gray-800">
+                Words of Advice
+              </h1>
+              <div className="text-sm text-gray-600 mt-1">
+                made with ❤️
+              </div>
+            </div>
 
-            <div className="flex space-x-4">
+            <div className="justify-self-end">
               <button 
                 className="text-sm bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/60 transition-colors"
                 onClick={() => setShowHowTo(true)}
@@ -152,48 +157,76 @@ const Wall = () => {
                 How to Use?
               </button>
             </div>
-
-            <div className="text-sm text-gray-600">
-              made with ❤️
-            </div>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="pt-40 h-full">
+      {/* Main Content with better wall positioning */}
+      <main className="pt-24 h-full">
         <TransformWrapper
           limitToBounds={false}
           minScale={0.1}
           maxScale={2}
           initialScale={1}
           centerOnInit={true}
+          wheel={{ step: 0.1 }}
         >
-          <TransformComponent>
-            <div
-              className="w-[5000px] h-[5000px] bg-gray-50 relative"
-              onClick={handleWallClick}
-              style={{
-                backgroundImage: `
-                  linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px),
-                  linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px)
-                `,
-                backgroundSize: '50px 50px'
-              }}
-            >
-              {messages.map((message) => (
-                <Message 
-                  key={message.id} 
-                  message={message} 
-                  userId={userId}
-                  onPositionUpdate={(id, pos) => {
-                    // Add position update handler if needed
-                    console.log('Position updated:', id, pos);
+          {({ zoomIn, zoomOut, resetTransform }) => (
+            <>
+              {/* Zoom Controls */}
+              <div className="fixed bottom-6 left-6 z-50 flex gap-2">
+                <button
+                  onClick={() => zoomIn()}
+                  className="p-2 bg-white rounded-full shadow-lg hover:bg-gray-50"
+                >
+                  +
+                </button>
+                <button
+                  onClick={() => zoomOut()}
+                  className="p-2 bg-white rounded-full shadow-lg hover:bg-gray-50"
+                >
+                  -
+                </button>
+                <button
+                  onClick={() => resetTransform()}
+                  className="p-2 bg-white rounded-full shadow-lg hover:bg-gray-50"
+                >
+                  ↺
+                </button>
+              </div>
+
+              <TransformComponent
+                wrapperStyle={{
+                  width: "100%",
+                  height: "calc(100vh - 6rem)"
+                }}
+              >
+                <div
+                  className="w-[10000px] h-[10000px] bg-gray-50 relative"
+                  onClick={handleWallClick}
+                  style={{
+                    backgroundImage: `
+                      linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px)
+                    `,
+                    backgroundSize: '50px 50px',
+                    transformOrigin: 'center center'
                   }}
-                />
-              ))}
-            </div>
-          </TransformComponent>
+                >
+                  {messages.map((message) => (
+                    <Message 
+                      key={message.id} 
+                      message={message} 
+                      userId={userId}
+                      onPositionUpdate={(id, pos) => {
+                        console.log('Position updated:', id, pos);
+                      }}
+                    />
+                  ))}
+                </div>
+              </TransformComponent>
+            </>
+          )}
         </TransformWrapper>
       </main>
 

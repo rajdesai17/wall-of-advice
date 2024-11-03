@@ -10,4 +10,9 @@ export interface Message {
   color: string;
   messageNumber: number;
   ownerId: string;
+}
+
+export interface MessagePosition {
+  x: number;
+  y: number;
 } 
