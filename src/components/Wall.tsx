@@ -50,6 +50,16 @@ const Wall = () => {
     fetchMessages();
   }, []);
 
+  useEffect(() => {
+    const handleError = (error: ErrorEvent) => {
+      console.error('Runtime error:', error);
+      setError(error.message);
+    };
+
+    window.addEventListener('error', handleError);
+    return () => window.removeEventListener('error', handleError);
+  }, []);
+
   const fetchMessages = async () => {
     try {
       setLoading(true);
