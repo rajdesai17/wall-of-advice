@@ -12,6 +12,14 @@ const Wall = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [clickPosition, setClickPosition] = useState({ x: 0, y: 0 });
   const [mounted, setMounted] = useState(false);
+  const [userId] = useState(() => {
+    if (typeof window === 'undefined') return '';
+    const stored = localStorage.getItem('wall-user-id');
+    if (stored) return stored;
+    const newId = crypto.randomUUID();
+    localStorage.setItem('wall-user-id', newId);
+    return newId;
+  });
 
   useEffect(() => {
     setMounted(true);
@@ -19,45 +27,55 @@ const Wall = () => {
   }, []);
 
   const fetchMessages = async () => {
-    const response = await fetch('/api/messages');
-    const data = await response.json();
-    setMessages(data);
+    try {
+      const response = await fetch('/api/messages');
+      const data = await response.json();
+      if (Array.isArray(data)) {
+        setMessages(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch messages:', error);
+    }
   };
 
   const handleWallClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
+      const rect = e.currentTarget.getBoundingClientRect();
       setClickPosition({
-        x: e.clientX,
-        y: e.clientY,
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
       });
       setIsModalOpen(true);
     }
   };
 
   const handleAddMessage = async (content: string, author?: string) => {
-    const newMessage = {
-      content,
-      author,
-      position: clickPosition,
-      createdAt: Date.now(),
-      color: `hsl(${Math.random() * 360}, 70%, 80%)`,
-    };
+    try {
+      const newMessage = {
+        content,
+        author,
+        position: clickPosition,
+        createdAt: Date.now(),
+        color: `hsl(${Math.random() * 360}, 70%, 80%)`,
+        ownerId: userId
+      };
 
-    const response = await fetch('/api/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newMessage),
-    });
+      const response = await fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newMessage),
+      });
 
-    if (response.ok) {
-      fetchMessages();
-      setIsModalOpen(false);
+      if (response.ok) {
+        fetchMessages();
+        setIsModalOpen(false);
+      }
+    } catch (error) {
+      console.error('Failed to add message:', error);
     }
   };
 
-  if (!mounted) {
-    return null;
-  }
+  if (!mounted) return null;
 
   return (
     <div className="fixed inset-0 overflow-hidden">
@@ -73,7 +91,7 @@ const Wall = () => {
             onClick={handleWallClick}
           >
             {messages.map((message) => (
-              <Message key={message.id} message={message} />
+              <Message key={message.id} message={message} userId={userId} />
             ))}
           </div>
         </TransformComponent>
@@ -92,4 +110,4 @@ const Wall = () => {
   );
 };
 
-export default Wall; 
+export default Wall;

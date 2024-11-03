@@ -5,24 +5,31 @@ import type { Message as MessageType } from '@/types';
 
 interface Props {
   message: MessageType;
+  userId: string;
 }
 
-const Message = ({ message }: Props) => {
+const Message = ({ message, userId }: Props) => {
   const handleDragEnd = async (event: any, info: any) => {
+    if (message.ownerId !== userId) return;
+
     const newPosition = {
       x: message.position.x + info.offset.x,
       y: message.position.y + info.offset.y,
     };
 
-    await fetch('/api/messages', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        messageId: message.id,
-        userId: localStorage.getItem('wall-user-id'),
-        updates: { position: newPosition }
-      }),
-    });
+    try {
+      await fetch('/api/messages', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messageId: message.id,
+          userId,
+          updates: { position: newPosition }
+        }),
+      });
+    } catch (error) {
+      console.error('Failed to update message position:', error);
+    }
   };
 
   return (
@@ -32,7 +39,8 @@ const Message = ({ message }: Props) => {
         left: message.position.x,
         top: message.position.y,
         transform: 'translate(-50%, -50%)',
-        backgroundColor: message.color
+        backgroundColor: message.color,
+        cursor: message.ownerId === userId ? 'move' : 'default'
       }}
     >
       <p className="text-gray-800">{message.content}</p>
