@@ -2,16 +2,10 @@ import { kv } from '@vercel/kv';
 import { NextResponse } from 'next/server';
 import { Message } from '@/types';
 
-// Type guard function
-function isMessageArray(data: unknown): data is Message[] {
-  return Array.isArray(data);
-}
-
 export async function GET() {
   try {
-    const data = await kv.get('wall-messages');
-    const messages = isMessageArray(data) ? data : [];
-    return NextResponse.json(messages);
+    const data = await kv.get<Message[]>('wall-messages');
+    return NextResponse.json(data || []);
   } catch (error) {
     console.error('Failed to fetch messages:', error);
     return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
@@ -21,8 +15,8 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const message = await request.json() as Message;
-    const data = await kv.get('wall-messages');
-    const messages = isMessageArray(data) ? data : [];
+    const data = await kv.get<Message[]>('wall-messages');
+    const messages = data || [];
     const updatedMessages = [...messages, message];
     await kv.set('wall-messages', updatedMessages);
     return NextResponse.json(message, { status: 201 });
@@ -35,8 +29,8 @@ export async function POST(request: Request) {
 export async function PATCH(request: Request) {
   try {
     const { messageId, userId, updates } = await request.json();
-    const data = await kv.get('wall-messages');
-    const messages = isMessageArray(data) ? data : [];
+    const data = await kv.get<Message[]>('wall-messages');
+    const messages = data || [];
     const messageIndex = messages.findIndex(m => m.id === messageId);
 
     if (messageIndex === -1) {
@@ -58,8 +52,8 @@ export async function PATCH(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const { messageId, userId } = await request.json();
-    const data = await kv.get('wall-messages');
-    const messages = isMessageArray(data) ? data : [];
+    const data = await kv.get<Message[]>('wall-messages');
+    const messages = data || [];
     const messageIndex = messages.findIndex(m => m.id === messageId);
 
     if (messageIndex === -1) {
