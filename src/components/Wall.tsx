@@ -20,6 +20,7 @@ const Wall = () => {
     localStorage.setItem('wall-user-id', newId);
     return newId;
   });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setMounted(true);
@@ -28,6 +29,7 @@ const Wall = () => {
 
   const fetchMessages = async () => {
     try {
+      setLoading(true);
       const response = await fetch('/api/messages');
       const data = await response.json();
       if (Array.isArray(data)) {
@@ -35,6 +37,8 @@ const Wall = () => {
       }
     } catch (error) {
       console.error('Failed to fetch messages:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -84,10 +88,32 @@ const Wall = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center">
+        <div className="text-xl text-gray-600">Loading messages...</div>
+      </div>
+    );
+  }
+
   if (!mounted) return null;
 
   return (
-    <div className="fixed inset-0 overflow-hidden">
+    <div className="fixed inset-0 overflow-hidden bg-gray-50">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm shadow-sm">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <h1 className="text-2xl font-semibold text-gray-800">Wall of Advice</h1>
+          <div className="flex space-x-4">
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              Add Message
+            </button>
+          </div>
+        </div>
+      </div>
+
       <TransformWrapper
         limitToBounds={false}
         minScale={0.1}
@@ -98,6 +124,13 @@ const Wall = () => {
           <div
             className="w-[5000px] h-[5000px] bg-gray-50"
             onClick={handleWallClick}
+            style={{
+              backgroundImage: `
+                linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px)
+              `,
+              backgroundSize: '50px 50px'
+            }}
           >
             {messages.map((message) => (
               <Message key={message.id} message={message} userId={userId} />
@@ -106,15 +139,11 @@ const Wall = () => {
         </TransformComponent>
       </TransformWrapper>
 
-      <NewMessageButton onClick={() => setIsModalOpen(true)} />
-      
-      {mounted && (
-        <MessageModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onSubmit={handleAddMessage}
-        />
-      )}
+      <MessageModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleAddMessage}
+      />
     </div>
   );
 };

@@ -16,7 +16,10 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    console.log('Received message:', body);
+
     const messages: Message[] = await redis.get('wall-messages') ?? [];
+    console.log('Current messages:', messages);
     
     const newMessage: Message = {
       id: uuidv4(),
@@ -29,11 +32,16 @@ export async function POST(request: Request) {
       ownerId: body.ownerId
     };
 
+    console.log('New message:', newMessage);
+
     await redis.set('wall-messages', [...messages, newMessage]);
     return NextResponse.json(newMessage);
   } catch (error) {
     console.error('Failed to save message:', error);
-    return NextResponse.json({ error: 'Failed to save message' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'Failed to save message',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 });
   }
 }
 

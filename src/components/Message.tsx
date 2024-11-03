@@ -34,16 +34,18 @@ const Message = ({ message, userId }: Props) => {
 
   return (
     <div
-      className="absolute max-w-xs p-4 rounded-lg shadow-lg cursor-move bg-white/90 backdrop-blur-sm"
+      className="absolute max-w-[90vw] md:max-w-sm p-4 rounded-lg shadow-lg cursor-move bg-white/90 backdrop-blur-sm transform -translate-x-1/2 -translate-y-1/2 transition-shadow hover:shadow-xl"
       style={{
         left: message.position.x,
         top: message.position.y,
-        transform: 'translate(-50%, -50%)',
         backgroundColor: message.color,
         cursor: message.ownerId === userId ? 'move' : 'default'
       }}
     >
-      <p className="text-gray-800">{message.content}</p>
+      <div className="absolute -top-3 left-4 text-xs text-gray-600 opacity-60">
+        #{message.messageNumber}
+      </div>
+      <p className="text-gray-800 break-words">{message.content}</p>
       {message.author && (
         <p className="mt-2 text-sm text-gray-500 italic">
           - {message.author}
