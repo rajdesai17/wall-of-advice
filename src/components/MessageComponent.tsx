@@ -4,27 +4,18 @@ import React from 'react';
 import type { Message as MessageType } from '@/types';
 
 interface MessageProps {
-  message: {
-    id: string;
-    content: string;
-    author?: string;
-    position: { x: number; y: number };
-    ownerId: string;
-    color: string;
-    createdAt: number;
-    messageNumber: number;
-  };
+  message: MessageType;
   userId: string;
-  onPositionUpdate: (messageId: string, position: { x: number; y: number }) => void;
+  onPositionUpdate: (id: string, pos: { x: number; y: number }) => void;
 }
 
-const Message: React.FC<MessageProps> = ({ message, userId, onPositionUpdate }) => {
+const MessageComponent: React.FC<MessageProps> = ({ message, userId, onPositionUpdate }) => {
   return (
     <div
       className="message absolute p-4 rounded-lg shadow-lg bg-white/90 backdrop-blur-sm"
       style={{
-        left: message.position.x,
-        top: message.position.y,
+        left: message.position_x,
+        top: message.position_y,
         transform: 'translate(-50%, -50%)',
         maxWidth: '300px',
         minWidth: '200px',
@@ -33,7 +24,7 @@ const Message: React.FC<MessageProps> = ({ message, userId, onPositionUpdate }) 
       }}
     >
       <div className="absolute -top-3 left-4 bg-white/50 px-2 py-0.5 rounded-full text-xs text-gray-600">
-        #{message.messageNumber}
+        #{message.message_number}
       </div>
       
       <div className="space-y-2">
@@ -51,4 +42,4 @@ const Message: React.FC<MessageProps> = ({ message, userId, onPositionUpdate }) 
   );
 };
 
-export default Message; 
+export default MessageComponent; 

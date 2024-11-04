@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       author: body.author,
       position_x: Math.round(body.position.x),
       position_y: Math.round(body.position.y),
-      created_at: new Date().toISOString(),
+      created_at: new Date(body.createdAt).toISOString(),
       color: body.color || `hsl(${Math.random() * 360}, 70%, 80%)`,
       owner_id: body.ownerId,
       message_number: body.messageNumber
