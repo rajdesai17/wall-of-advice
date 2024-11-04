@@ -12,7 +12,21 @@ export async function GET() {
 
     if (error) throw error;
     
-    return NextResponse.json(messages);
+    const transformedMessages = messages.map(msg => ({
+      id: msg.id,
+      content: msg.content,
+      author: msg.author,
+      position: {
+        x: msg.position_x,
+        y: msg.position_y
+      },
+      createdAt: new Date(msg.created_at).getTime(),
+      color: msg.color,
+      ownerId: msg.owner_id,
+      messageNumber: msg.message_number
+    }));
+    
+    return NextResponse.json(transformedMessages);
   } catch (error) {
     console.error('Failed to fetch messages:', error);
     return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
@@ -31,7 +45,8 @@ export async function POST(request: Request) {
       position_y: Math.round(body.position.y),
       created_at: new Date().toISOString(),
       color: body.color || `hsl(${Math.random() * 360}, 70%, 80%)`,
-      owner_id: body.ownerId
+      owner_id: body.ownerId,
+      message_number: body.messageNumber
     };
 
     const { data, error } = await supabase
@@ -40,9 +55,23 @@ export async function POST(request: Request) {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase error:', error);
+      throw error;
+    }
 
-    return NextResponse.json(data);
+    const transformedData = {
+      ...data,
+      position: {
+        x: data.position_x,
+        y: data.position_y
+      },
+      ownerId: data.owner_id,
+      createdAt: new Date(data.created_at).getTime(),
+      messageNumber: data.message_number
+    };
+
+    return NextResponse.json(transformedData);
   } catch (error) {
     console.error('Failed to save message:', error);
     return NextResponse.json({ 
