@@ -88,19 +88,24 @@ const Wall = () => {
       return;
     }
 
-    const transformWrapper = e.currentTarget.closest('.react-transform-wrapper') as HTMLElement;
-    const transformComponent = e.currentTarget.closest('.react-transform-component') as HTMLElement;
+    const transformWrapper = e.currentTarget.closest('.react-transform-wrapper');
+    const transformComponent = e.currentTarget.closest('.react-transform-component');
     
     if (!transformWrapper || !transformComponent) return;
 
+    // Get the transform matrix
     const transform = window.getComputedStyle(transformWrapper).transform;
     const matrix = new DOMMatrix(transform);
     const scale = matrix.a;
-    
+
+    // Get click coordinates relative to the transform component
     const rect = transformComponent.getBoundingClientRect();
-    
-    const x = (e.clientX - rect.left) / scale;
-    const y = (e.clientY - rect.top) / scale;
+    const offsetX = e.clientX - rect.left;
+    const offsetY = e.clientY - rect.top;
+
+    // Calculate the actual position on the canvas
+    const x = (offsetX / scale) + 5000; // Add half of minWidth since we offset by -5000
+    const y = (offsetY / scale) + 5000; // Add half of minHeight since we offset by -5000
 
     setClickPosition({
       modal: {
