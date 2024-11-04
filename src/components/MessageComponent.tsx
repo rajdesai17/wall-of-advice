@@ -14,8 +14,8 @@ const MessageComponent: React.FC<MessageProps> = ({ message, userId, onPositionU
     <div
       className="message absolute p-4 rounded-lg shadow-lg bg-white/90 backdrop-blur-sm"
       style={{
-        left: message.position_x,
-        top: message.position_y,
+        left: message.position.x,
+        top: message.position.y,
         transform: 'translate(-50%, -50%)',
         maxWidth: '300px',
         minWidth: '200px',
@@ -24,7 +24,7 @@ const MessageComponent: React.FC<MessageProps> = ({ message, userId, onPositionU
       }}
     >
       <div className="absolute -top-3 left-4 bg-white/50 px-2 py-0.5 rounded-full text-xs text-gray-600">
-        #{message.message_number}
+        #{message.messageNumber}
       </div>
       
       <div className="space-y-2">

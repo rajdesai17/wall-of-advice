@@ -2,12 +2,14 @@ export interface Message {
   id: string;
   content: string;
   author?: string;
-  position_x: number;
-  position_y: number;
-  created_at: string;
+  position: {
+    x: number;
+    y: number;
+  };
+  createdAt: number;
   color: string;
-  owner_id: string;
-  message_number: number;
+  ownerId: string;
+  messageNumber: number;
 }
 
 export interface MessagePosition {
