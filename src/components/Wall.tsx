@@ -196,19 +196,19 @@ const Wall = () => {
 
   return (
     <div className="fixed inset-0 overflow-hidden bg-gray-50">
-      {/* Fixed Header with improved styling */}
-      <header className="fixed top-0 left-0 right-0 z-[9999]">
-        <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/80 to-transparent" />
-        <div className="container mx-auto px-4 py-4">
+      {/* Fixed Header */}
+      <header className="header-container">
+        <div className="header-gradient" />
+        <div className="header-content container mx-auto">
           <div className="flex items-center justify-center space-x-8">
             <button 
-              className="text-sm bg-white/80 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/90 transition-colors"
+              className="text-sm bg-white/90 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/95 transition-colors"
               onClick={() => setShowInfo(true)}
             >
               What is Wall of Advice?
             </button>
 
-            <div className="text-center bg-white/80 backdrop-blur-sm px-6 py-2 rounded-2xl shadow-md">
+            <div className="text-center bg-white/90 backdrop-blur-sm px-6 py-2 rounded-2xl shadow-md">
               <h1 className="text-3xl font-semibold text-gray-800">
                 Words of Advice
               </h1>
@@ -218,7 +218,7 @@ const Wall = () => {
             </div>
 
             <button 
-              className="text-sm bg-white/80 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/90 transition-colors"
+              className="text-sm bg-white/90 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/95 transition-colors"
               onClick={() => setShowHowTo(true)}
             >
               How to Use?
@@ -227,8 +227,8 @@ const Wall = () => {
         </div>
       </header>
 
-      {/* Main Content - Updated styles */}
-      <main className="h-full">
+      {/* Main Content */}
+      <main className="main-content">
         <TransformWrapper
           limitToBounds={false}
           minScale={0.5}
