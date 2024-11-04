@@ -118,7 +118,10 @@ const Wall = () => {
       id: crypto.randomUUID(),
       content,
       author,
-      position: clickPosition.message,
+      position: {
+        x: Math.round(clickPosition.message.x),
+        y: Math.round(clickPosition.message.y)
+      },
       ownerId: userId,
       color: `hsl(${Math.random() * 360}, 70%, 80%)`,
       createdAt: Date.now(),

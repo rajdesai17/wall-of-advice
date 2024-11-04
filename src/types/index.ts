@@ -8,8 +8,8 @@ export interface Message {
   };
   createdAt: number;
   color: string;
-  messageNumber: number;
   ownerId: string;
+  messageNumber: number;
 }
 
 export interface MessagePosition {
