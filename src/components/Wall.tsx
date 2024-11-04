@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import type { Message as MessageType } from '@/types';
-import Message from './Message';
+import type { Message } from '@/types';
+import MessageComponent from './MessageComponent';
 import NewMessageButton from './NewMessageButton';
 import MessageModal from './MessageModal';
 import { 
@@ -22,7 +22,7 @@ interface TransformWrapperRenderProps {
 }
 
 const Wall = () => {
-  const [messages, setMessages] = useState<MessageType[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [clickPosition, setClickPosition] = useState<{
     modal: { x: number; y: number };
@@ -114,7 +114,7 @@ const Wall = () => {
   };
 
   const handleAddMessage = async (content: string, author?: string) => {
-    const newMessage: MessageType = {
+    const newMessage: Message = {
       id: crypto.randomUUID(),
       content,
       author,
@@ -274,11 +274,11 @@ const Wall = () => {
                   onClick={handleWallClick}
                 >
                   {messages.map((message) => (
-                    <Message 
+                    <MessageComponent 
                       key={message.id} 
                       message={message} 
                       userId={userId}
-                      onPositionUpdate={(id, pos) => {
+                      onPositionUpdate={(id: string, pos: { x: number; y: number }) => {
                         setMessages(prev => 
                           prev.map(msg => 
                             msg.id === id 
