@@ -15,6 +15,10 @@ Wall of Advice is an interactive web application that creates a space for meanin
 - 💫 Smooth animations and intuitive interface
 - 📱 Responsive design for all devices
 
+![Wall of Advice Preview](https://github.com/user-attachments/assets/e7578cfd-3a9f-496c-9fcd-2e1c910c1438)
+![1](https://github.com/user-attachments/assets/8ea65f59-42d3-4683-9216-186119400d48)
+![2](https://github.com/user-attachments/assets/5b5c0da0-a6f8-485a-8c3a-40fa9b42387d)
+
 ## Technology Stack
 
 - Next.js 14
