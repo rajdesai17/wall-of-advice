@@ -170,7 +170,7 @@ const Wall = () => {
       <div className="fixed inset-0 flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent mb-4"></div>
-          <div className="text-xl text-gray-600">Loading messages...</div>
+          <div className="text-xl text-gray-600">Revealing the Wall...</div>
         </div>
       </div>
     );
@@ -231,9 +231,9 @@ const Wall = () => {
       <main className="main-content">
         <TransformWrapper
           limitToBounds={false}
-          minScale={0.5}
-          maxScale={2}
-          initialScale={1}
+          minScale={0.1}
+          maxScale={3}
+          initialScale={0.8}
           centerOnInit={true}
           wheel={{ step: 0.1 }}
           panning={{ disabled: false }}
@@ -241,6 +241,8 @@ const Wall = () => {
           smooth={true}
           alignmentAnimation={{ sizeX: 0, sizeY: 0 }}
           velocityAnimation={{ sensitivity: 1 }}
+          initialPositionX={0}
+          initialPositionY={0}
         >
           {(props: ReactZoomPanPinchContentRef) => (
             <>
@@ -272,7 +274,7 @@ const Wall = () => {
               <TransformComponent
                 wrapperStyle={{
                   width: "100%",
-                  height: "100vh" // Updated height
+                  height: "100vh"
                 }}
               >
                 <div
@@ -280,14 +282,17 @@ const Wall = () => {
                   style={{
                     width: '100%',
                     height: '100%',
-                    minWidth: '3000px',
-                    minHeight: '3000px',
+                    minWidth: '10000px',
+                    minHeight: '10000px',
                     backgroundImage: `
                       linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
                       linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px)
                     `,
                     backgroundSize: '50px 50px',
-                    transformOrigin: 'center center'
+                    transformOrigin: 'center center',
+                    position: 'absolute',
+                    left: '-5000px',
+                    top: '-5000px'
                   }}
                   onClick={handleWallClick}
                 >
