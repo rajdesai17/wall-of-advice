@@ -1,70 +1,93 @@
-# Getting Started with Create React App
+# Wall of Advice
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A digital community board where people can anonymously share and discover wisdom through colorful sticky notes on an infinite canvas.
 
-## Available Scripts
+## Overview
 
-In the project directory, you can run:
+Wall of Advice is an interactive web application that creates a space for meaningful human connection in the digital age. Users can leave anonymous pieces of advice, wisdom, or encouraging messages by placing virtual sticky notes anywhere on an infinite canvas.
 
-### `npm start`
+### Key Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- 🎯 Click-to-add messages anywhere on the wall
+- 🎨 Colorful, draggable sticky notes
+- 🔍 Zoomable and pannable infinite canvas
+- ✍️ Optional message signing with #username
+- 💫 Smooth animations and intuitive interface
+- 📱 Responsive design for all devices
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+![Wall of Advice Preview](https://github.com/user-attachments/assets/e7578cfd-3a9f-496c-9fcd-2e1c910c1438)
+![1](https://github.com/user-attachments/assets/8ea65f59-42d3-4683-9216-186119400d48)
+![2](https://github.com/user-attachments/assets/5b5c0da0-a6f8-485a-8c3a-40fa9b42387d)
 
-### `npm test`
+## Technology Stack
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Next.js 14
+- React 18
+- TypeScript
+- Tailwind CSS
+- Redis (Upstash)
+- Vercel/Netlify for deployment
 
-### `npm run build`
+## Getting Started
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Clone the repository
+2. Install dependencies:
+```bash
+npm install
+```
+3. Set up environment variables
+Create a .env.local file and add:
+```bash
+UPSTASH_REDIS_REST_URL=your_redis_url
+UPSTASH_REDIS_REST_TOKEN=your_redis_token
+```
+4. Run the development server
+```bash
+npm run dev
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## How to Use
 
-### `npm run eject`
+1. Click anywhere on the wall to add a message
+2. Write your message - it can be advice, thoughts, or kind words
+3. Optionally sign your message with #yourname at the end
+4. Press Enter or click "Add Message" to save
+5. Drag to pan around the wall
+6. Use zoom controls to zoom in/out
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Deployment
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Deploy on Vercel
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme).
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Deploy on Netlify
+You can also deploy using [Netlify](https://www.netlify.com/) with zero configuration.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Contributing
 
-## Learn More
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+1. Fork the project
+2. Create your feature branch
+```bash
+git checkout -b feature/featurename
+```
+3. Commit your changes
+```bash
+git commit -m 'Add some AmazingFeature'
+```
+4. Push to the branch
+```bash
+git push origin feature/AmazingFeature
+```
+5. Open a Pull Request
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## License
 
-### Code Splitting
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Made with ❤️ for sharing wisdom
