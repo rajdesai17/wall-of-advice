@@ -43,11 +43,13 @@ export async function POST(request: Request) {
       author: body.author,
       position_x: Math.round(body.position.x),
       position_y: Math.round(body.position.y),
-      created_at: new Date(body.createdAt).toISOString(),
+      created_at: new Date().toISOString(),
       color: body.color,
       owner_id: body.ownerId,
       message_number: body.messageNumber
     };
+
+    console.log('Inserting message:', newMessage);
 
     const { data, error } = await supabase
       .from('messages')

@@ -115,7 +115,7 @@ const Wall = () => {
 
   const handleAddMessage = async (content: string, author?: string) => {
     const messageId = crypto.randomUUID();
-    const newMessage: Message = {
+    const newMessage = {
       id: messageId,
       content,
       author,
@@ -133,6 +133,8 @@ const Wall = () => {
       setMessages(prev => [...prev, newMessage]);
       setIsModalOpen(false);
 
+      console.log('Sending message:', newMessage);
+
       const response = await fetch('/api/messages', {
         method: 'POST',
         headers: {
@@ -141,20 +143,20 @@ const Wall = () => {
         body: JSON.stringify(newMessage),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const error = await response.json();
-        console.error('Server error:', error);
-        throw new Error(error.details || 'Failed to add message');
+        console.error('Server error:', data);
+        throw new Error(data.details || 'Failed to add message');
       }
 
-      const savedMessage = await response.json();
       setMessages(prev => 
-        prev.map(msg => msg.id === messageId ? savedMessage : msg)
+        prev.map(msg => msg.id === messageId ? data : msg)
       );
     } catch (error) {
       console.error('Error adding message:', error);
-      setError('Failed to add message. Please try again.');
       setMessages(prev => prev.filter(msg => msg.id !== messageId));
+      setError('Failed to add message. Please try again.');
     }
   };
 
