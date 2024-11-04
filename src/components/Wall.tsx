@@ -114,8 +114,9 @@ const Wall = () => {
   };
 
   const handleAddMessage = async (content: string, author?: string) => {
+    const messageId = crypto.randomUUID();
     const newMessage: Message = {
-      id: crypto.randomUUID(),
+      id: messageId,
       content,
       author,
       position: {
@@ -141,12 +142,19 @@ const Wall = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to add message');
+        const error = await response.json();
+        console.error('Server error:', error);
+        throw new Error(error.details || 'Failed to add message');
       }
+
+      const savedMessage = await response.json();
+      setMessages(prev => 
+        prev.map(msg => msg.id === messageId ? savedMessage : msg)
+      );
     } catch (error) {
       console.error('Error adding message:', error);
       setError('Failed to add message. Please try again.');
-      setMessages(prev => prev.filter(msg => msg.id !== newMessage.id));
+      setMessages(prev => prev.filter(msg => msg.id !== messageId));
     }
   };
 

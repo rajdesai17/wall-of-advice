@@ -38,13 +38,13 @@ export async function POST(request: Request) {
     const body = await request.json();
     
     const newMessage = {
-      id: uuidv4(),
+      id: body.id,
       content: body.content,
       author: body.author,
       position_x: Math.round(body.position.x),
       position_y: Math.round(body.position.y),
-      created_at: new Date().toISOString(),
-      color: body.color || `hsl(${Math.random() * 360}, 70%, 80%)`,
+      created_at: new Date(body.createdAt).toISOString(),
+      color: body.color,
       owner_id: body.ownerId,
       message_number: body.messageNumber
     };
