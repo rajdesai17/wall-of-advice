@@ -5,8 +5,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Required for Netlify
-  output: 'standalone',
+  experimental: {
+    serverActions: true,
+  }
 }
 
 module.exports = nextConfig 

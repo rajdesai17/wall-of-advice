@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       author: body.author,
       position_x: Math.round(body.position.x),
       position_y: Math.round(body.position.y),
-      created_at: new Date(body.createdAt).toISOString(),
+      created_at: new Date().toISOString(),
       color: body.color || `hsl(${Math.random() * 360}, 70%, 80%)`,
       owner_id: body.ownerId,
       message_number: body.messageNumber
@@ -61,13 +61,16 @@ export async function POST(request: Request) {
     }
 
     const transformedData = {
-      ...data,
+      id: data.id,
+      content: data.content,
+      author: data.author,
       position: {
         x: data.position_x,
         y: data.position_y
       },
-      ownerId: data.owner_id,
       createdAt: new Date(data.created_at).getTime(),
+      color: data.color,
+      ownerId: data.owner_id,
       messageNumber: data.message_number
     };
 
