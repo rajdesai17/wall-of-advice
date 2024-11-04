@@ -196,13 +196,13 @@ const Wall = () => {
 
   return (
     <div className="fixed inset-0 overflow-hidden bg-gray-50">
-      {/* Fixed Header - Updated styles */}
-      <header className="fixed top-0 left-0 w-full z-[9999] pointer-events-none">
+      {/* Fixed Header with improved styling */}
+      <header className="fixed top-0 left-0 right-0 z-[9999]">
         <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/80 to-transparent" />
-        <div className="relative px-4 py-4">
-          <div className="flex items-center justify-center gap-8 max-w-4xl mx-auto">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-center space-x-8">
             <button 
-              className="text-sm bg-white/80 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/90 transition-colors pointer-events-auto"
+              className="text-sm bg-white/80 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/90 transition-colors"
               onClick={() => setShowInfo(true)}
             >
               What is Wall of Advice?
@@ -218,7 +218,7 @@ const Wall = () => {
             </div>
 
             <button 
-              className="text-sm bg-white/80 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/90 transition-colors pointer-events-auto"
+              className="text-sm bg-white/80 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-md hover:bg-white/90 transition-colors"
               onClick={() => setShowHowTo(true)}
             >
               How to Use?
