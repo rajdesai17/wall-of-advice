@@ -52,6 +52,9 @@ const Wall = () => {
 
   useEffect(() => {
     const handleError = (error: ErrorEvent) => {
+      if (error.message === 'ResizeObserver loop completed with undelivered notifications.') {
+        return;
+      }
       console.error('Runtime error:', error);
       setError(error.message);
     };
@@ -150,6 +153,8 @@ const Wall = () => {
         throw new Error(data.details || 'Failed to add message');
       }
 
+      console.log('Message saved successfully:', data);
+
       setMessages(prev => 
         prev.map(msg => msg.id === messageId ? data : msg)
       );
@@ -233,6 +238,9 @@ const Wall = () => {
           wheel={{ step: 0.1 }}
           panning={{ disabled: false }}
           doubleClick={{ disabled: true }}
+          smooth={true}
+          alignmentAnimation={{ sizeX: 0, sizeY: 0 }}
+          velocityAnimation={{ sensitivity: 1 }}
         >
           {(props: ReactZoomPanPinchContentRef) => (
             <>

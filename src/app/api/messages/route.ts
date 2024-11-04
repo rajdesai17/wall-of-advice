@@ -49,7 +49,7 @@ export async function POST(request: Request) {
       message_number: body.messageNumber
     };
 
-    console.log('Inserting message:', newMessage);
+    console.log('Attempting to insert message:', newMessage);
 
     const { data, error } = await supabase
       .from('messages')
@@ -59,7 +59,17 @@ export async function POST(request: Request) {
 
     if (error) {
       console.error('Supabase error:', error);
-      throw error;
+      return NextResponse.json({ 
+        error: 'Failed to save message', 
+        details: error.message 
+      }, { status: 500 });
+    }
+
+    if (!data) {
+      return NextResponse.json({ 
+        error: 'Failed to save message', 
+        details: 'No data returned from database' 
+      }, { status: 500 });
     }
 
     const transformedData = {
