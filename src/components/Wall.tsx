@@ -104,8 +104,8 @@ const Wall = () => {
     const offsetY = e.clientY - rect.top;
 
     // Calculate the actual position on the canvas
-    const x = (offsetX / scale) + 5000; // Add half of minWidth since we offset by -5000
-    const y = (offsetY / scale) + 5000; // Add half of minHeight since we offset by -5000
+    const x = offsetX / scale;
+    const y = offsetY / scale;
 
     setClickPosition({
       modal: {
