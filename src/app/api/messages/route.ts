@@ -2,35 +2,41 @@ import { supabase } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
 import type { Message } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
+import { headers } from 'next/headers';
+
+async function getMessages() {
+  const { data, error } = await supabase
+    .from('messages')
+    .select('*')
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching messages:', error);
+    throw error;
+  }
+
+  return data?.map(message => ({
+    id: message.id,
+    content: message.content,
+    author: message.author,
+    position: {
+      x: message.position_x,
+      y: message.position_y
+    },
+    createdAt: new Date(message.created_at).getTime(),
+    color: message.color,
+    ownerId: message.owner_id,
+    messageNumber: message.message_number
+  })) ?? [];
+}
 
 export async function GET() {
-  try {
-    const { data: messages, error } = await supabase
-      .from('messages')
-      .select('*')
-      .order('created_at', { ascending: true });
+  const headersList = headers();
+  const referer = headersList.get('referer');
 
-    if (error) throw error;
-    
-    const transformedMessages = messages.map(msg => ({
-      id: msg.id,
-      content: msg.content,
-      author: msg.author,
-      position: {
-        x: msg.position_x,
-        y: msg.position_y
-      },
-      createdAt: new Date(msg.created_at).getTime(),
-      color: msg.color,
-      ownerId: msg.owner_id,
-      messageNumber: msg.message_number
-    }));
-    
-    return NextResponse.json(transformedMessages);
-  } catch (error) {
-    console.error('Failed to fetch messages:', error);
-    return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
-  }
+  const response = NextResponse.json(await getMessages());
+  response.headers.set('Cache-Control', 's-maxage=1, stale-while-revalidate');
+  return response;
 }
 
 export async function POST(request: Request) {

@@ -1,25 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import type { Message } from '@/types';
 import MessageComponent from './MessageComponent';
-import NewMessageButton from './NewMessageButton';
 import MessageModal from './MessageModal';
 import { 
   TransformWrapper, 
   TransformComponent,
-  ReactZoomPanPinchRef,
-  ReactZoomPanPinchContentRef
 } from 'react-zoom-pan-pinch';
 import { Dialog } from '@headlessui/react';
 import InfoModal from './InfoModal';
 import HowToModal from './HowToModal';
-
-interface TransformWrapperRenderProps {
-  zoomIn: () => void;
-  zoomOut: () => void;
-  resetTransform: () => void;
-}
 
 const Wall = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -34,92 +25,57 @@ const Wall = () => {
   const [mounted, setMounted] = useState(false);
   const [userId] = useState(() => {
     if (typeof window === 'undefined') return '';
-    const stored = localStorage.getItem('wall-user-id');
-    if (stored) return stored;
-    const newId = crypto.randomUUID();
-    localStorage.setItem('wall-user-id', newId);
-    return newId;
+    return localStorage.getItem('wall-user-id') || crypto.randomUUID();
   });
   const [loading, setLoading] = useState(true);
   const [showInfo, setShowInfo] = useState(false);
   const [showHowTo, setShowHowTo] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    setMounted(true);
-    fetchMessages();
-  }, []);
-
-  useEffect(() => {
-    const handleError = (error: ErrorEvent) => {
-      if (error.message === 'ResizeObserver loop completed with undelivered notifications.') {
-        return;
-      }
-      console.error('Runtime error:', error);
-      setError(error.message);
-    };
-
-    window.addEventListener('error', handleError);
-    return () => window.removeEventListener('error', handleError);
-  }, []);
-
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       const response = await fetch('/api/messages');
-      if (!response.ok) {
-        throw new Error('Failed to fetch messages');
-      }
+      if (!response.ok) throw new Error('Failed to fetch messages');
       const data = await response.json();
-      if (Array.isArray(data)) {
-        setMessages(data);
-      }
+      if (Array.isArray(data)) setMessages(data);
     } catch (error) {
       console.error('Failed to fetch messages:', error);
       setError('Failed to load messages. Please try again later.');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const handleWallClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if ((e.target as HTMLElement).closest('.message')) {
-      return;
-    }
+  useEffect(() => {
+    setMounted(true);
+    fetchMessages();
+  }, [fetchMessages]);
+
+  const handleWallClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if ((e.target as HTMLElement).closest('.message')) return;
 
     const transformWrapper = e.currentTarget.closest('.react-transform-wrapper');
     const transformComponent = e.currentTarget.closest('.react-transform-component');
     
     if (!transformWrapper || !transformComponent) return;
 
-    // Get the transform matrix
     const transform = window.getComputedStyle(transformWrapper).transform;
     const matrix = new DOMMatrix(transform);
     const scale = matrix.a;
 
-    // Get click coordinates relative to the transform component
     const rect = transformComponent.getBoundingClientRect();
-    const offsetX = e.clientX - rect.left;
-    const offsetY = e.clientY - rect.top;
-
-    // Calculate the actual position on the canvas, accounting for the -5000px offset
-    const x = (offsetX / scale) + 5000;
-    const y = (offsetY / scale) + 5000;
+    const x = ((e.clientX - rect.left) / scale) + 5000;
+    const y = ((e.clientY - rect.top) / scale) + 5000;
 
     setClickPosition({
-      modal: {
-        x: e.clientX,
-        y: e.clientY
-      },
-      message: {
-        x: x,
-        y: y
-      }
+      modal: { x: e.clientX, y: e.clientY },
+      message: { x, y }
     });
     
     setIsModalOpen(true);
-  };
+  }, []);
 
   const handleAddMessage = async (content: string, author?: string) => {
     const messageId = crypto.randomUUID();
@@ -249,7 +205,7 @@ const Wall = () => {
           initialPositionX={0}
           initialPositionY={0}
         >
-          {(props: ReactZoomPanPinchContentRef) => (
+          {(props) => (
             <>
               {/* Zoom Controls - Updated z-index */}
               <div className="fixed bottom-6 left-6 z-[9998] flex gap-2">

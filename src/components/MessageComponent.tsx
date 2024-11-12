@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { memo } from 'react';
 import type { Message as MessageType } from '@/types';
 
 interface MessageProps {
@@ -9,14 +9,13 @@ interface MessageProps {
   onPositionUpdate: (id: string, pos: { x: number; y: number }) => void;
 }
 
-const MessageComponent: React.FC<MessageProps> = ({ message, userId, onPositionUpdate }) => {
+const MessageComponent = memo(({ message, userId, onPositionUpdate }: MessageProps) => {
   return (
     <div
-      className="message absolute p-4 rounded-lg shadow-lg bg-white/90 backdrop-blur-sm"
+      className="message absolute p-4 rounded-lg shadow-lg bg-white/90 backdrop-blur-sm transform -translate-x-1/2 -translate-y-1/2 transition-shadow hover:shadow-xl"
       style={{
         left: message.position.x,
         top: message.position.y,
-        transform: 'translate(-50%, -50%)',
         maxWidth: '300px',
         minWidth: '200px',
         backgroundColor: message.color,
@@ -40,6 +39,8 @@ const MessageComponent: React.FC<MessageProps> = ({ message, userId, onPositionU
       </div>
     </div>
   );
-};
+});
+
+MessageComponent.displayName = 'MessageComponent';
 
 export default MessageComponent; 
