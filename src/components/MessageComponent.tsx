@@ -1,46 +1,36 @@
 'use client';
 
-import React, { memo } from 'react';
-import type { Message as MessageType } from '@/types';
+import React from 'react';
+import type { Message } from '@/types';
 
-interface MessageProps {
-  message: MessageType;
+interface MessageComponentProps {
+  message: Message;
   userId: string;
-  onPositionUpdate: (id: string, pos: { x: number; y: number }) => void;
 }
 
-const MessageComponent = memo(({ message, userId, onPositionUpdate }: MessageProps) => {
+const MessageComponent = ({ message, userId }: MessageComponentProps) => {
+  const isOwner = message.ownerId === userId;
+
   return (
     <div
-      className="message absolute p-4 rounded-lg shadow-lg bg-white/90 backdrop-blur-sm transform -translate-x-1/2 -translate-y-1/2 transition-shadow hover:shadow-xl"
+      className="group relative p-6 rounded-lg shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
       style={{
-        left: message.position.x,
-        top: message.position.y,
-        maxWidth: '300px',
-        minWidth: '200px',
         backgroundColor: message.color,
-        zIndex: 10
       }}
     >
-      <div className="absolute -top-3 left-4 bg-white/50 px-2 py-0.5 rounded-full text-xs text-gray-600">
-        #{message.messageNumber}
-      </div>
-      
-      <div className="space-y-2">
-        <p className="text-gray-800 whitespace-pre-wrap break-words">
-          {message.content}
+      <p className="text-gray-800 text-lg mb-4 whitespace-pre-wrap">
+        {message.content}
+      </p>
+      {message.author && (
+        <p className="text-gray-600 text-sm italic">
+          - {message.author}
         </p>
-        
-        {message.author && (
-          <p className="text-sm text-gray-600 italic">
-            ~ {message.author}
-          </p>
-        )}
+      )}
+      <div className="absolute bottom-3 right-3 text-xs text-gray-500">
+        #{message.messageNumber}
       </div>
     </div>
   );
-});
+};
 
-MessageComponent.displayName = 'MessageComponent';
-
-export default MessageComponent; 
+export default React.memo(MessageComponent); 

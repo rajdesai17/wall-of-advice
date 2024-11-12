@@ -44,18 +44,16 @@ export async function POST(request: Request) {
     const body = await request.json();
     
     const newMessage = {
-      id: body.id,
+      id: body.id || crypto.randomUUID(),
       content: body.content,
-      author: body.author,
+      author: body.author || null,
       position_x: Math.round(body.position.x),
       position_y: Math.round(body.position.y),
       created_at: new Date().toISOString(),
-      color: body.color,
+      color: body.color || `hsl(${Math.random() * 360}, 70%, 80%)`,
       owner_id: body.ownerId,
       message_number: body.messageNumber
     };
-
-    console.log('Attempting to insert message:', newMessage);
 
     const { data, error } = await supabase
       .from('messages')
@@ -65,17 +63,7 @@ export async function POST(request: Request) {
 
     if (error) {
       console.error('Supabase error:', error);
-      return NextResponse.json({ 
-        error: 'Failed to save message', 
-        details: error.message 
-      }, { status: 500 });
-    }
-
-    if (!data) {
-      return NextResponse.json({ 
-        error: 'Failed to save message', 
-        details: 'No data returned from database' 
-      }, { status: 500 });
+      throw error;
     }
 
     const transformedData = {

@@ -4,30 +4,55 @@
 
 :root {
   --foreground-rgb: 0, 0, 0;
-  --background-rgb: 250, 250, 250;
+  --background-rgb: 255, 255, 255;
 }
 
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-/* Add smooth transitions for dragging */
-.message-draggable {
-  transition: transform 0.1s ease-out;
+/* Message animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Custom scrollbar for better appearance */
+.message-enter {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Modal animations */
+.modal-enter {
+  animation: modalFadeIn 0.2s ease-out forwards;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
-  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -35,75 +60,10 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888;
+  background: #cbd5e0;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #666;
+  background: #a0aec0;
 }
-
-/* Add fixed header styles */
-.header-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  padding: 1rem;
-  pointer-events: none;
-  width: 100%;
-}
-
-.header-content {
-  pointer-events: auto;
-  position: relative;
-  z-index: 51;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-/* Update gradient background */
-.header-gradient {
-  position: absolute;
-  inset: 0;
-  height: 8rem;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(255, 255, 255, 0.8) 60%,
-    transparent 100%
-  );
-  pointer-events: none;
-}
-
-/* Ensure content stays below fixed header */
-.main-content {
-  padding-top: 6rem; /* Adjust based on header height */
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* Update header layout styles */
-.header-layout {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  flex-wrap: nowrap;
-  width: 100%;
-}
-
-/* Ensure buttons don't shrink */
-.header-button {
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-
-/* Update title container */
-.title-container {
-  flex-shrink: 0;
-  text-align: center;
-  min-width: 200px;
-} 

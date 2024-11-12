@@ -5,9 +5,6 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  experimental: {
-    serverActions: true,
-  },
   webpack: (config) => {
     config.optimization.splitChunks = {
       chunks: 'all',
@@ -29,7 +26,17 @@ const nextConfig = {
         },
       },
     };
+
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      path: false,
+    };
+
     return config;
+  },
+  experimental: {
+    webpackBuildWorker: true,
   },
 }
 
